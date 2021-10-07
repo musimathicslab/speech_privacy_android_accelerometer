@@ -14,6 +14,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import models
 
 
+# Dataset used by CNN
 directory = ['DatasetSpeechUnit/Dataset_A', 'DatasetSpeechUnit/Dataset_All', 'DatasetSpeechUnit/Dataset_As',
              'DatasetSpeechUnit/Dataset_Be',  'DatasetSpeechUnit/Dataset_Beau',  'DatasetSpeechUnit/Dataset_Best',
              'DatasetSpeechUnit/Dataset_Birds', 'DatasetSpeechUnit/Dataset_Bite', 'DatasetSpeechUnit/Dataset_Book',
@@ -47,9 +48,14 @@ directory = ['DatasetSpeechUnit/Dataset_A', 'DatasetSpeechUnit/Dataset_All', 'Da
              'DatasetSpeechUnit/Dataset_What', 'DatasetSpeechUnit/Dataset_You', 'DatasetSpeechUnit/Dataset_Your']
 
 
-# FILTRO PASSA ALTO
-# it divide the signal of speech from that of movements
 def high_pass_filter(x, cutoff):
+    """
+      FILTRO PASSA ALTO
+      it divide the signal of speech from that of movements
+      :param x: one of the axis of the data
+      :param cutoff: limit of the cutoff
+      :return: the data with cutoff application
+    """
     fs = len(x)
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
@@ -63,16 +69,15 @@ def high_pass_filter(x, cutoff):
     a, rec = signal.istft(zxx)
     rec = list(rec)
 
-    '''if (len(rec))>=fs:
-        i=len(rec)-fs
-        for n in range(0,i):
-            rec.pop()'''
-
     return rec
 
 
-# Function for generate a spectrogram from a signal
 def get_spectrogram(waveform):
+    """
+       Function for generate a spectrogram from a signal
+       :param waveform: the signal
+       :return: the spectogram of signal
+    """
 
     spectrogram = tf.signal.stft(
         waveform, frame_length=50, frame_step=128)
@@ -82,14 +87,13 @@ def get_spectrogram(waveform):
     return spectrogram
 
 
-# Function of interpolation
 def interpolate_1d_vector(vector, factor):
     """
-    Interpolate, i.e. upsample,
-     a given 1D vector by a specific interpolation factor.
-    :param vector: 1D data vector
-    :param factor: factor for interpolation (must be integer)
-    :return: interpolated 1D vector by a given factor
+        Function of interpolation
+        Interpolate, i.e. upsample, a given 1D vector by a specific interpolation factor.
+        :param vector: 1D data vector
+        :param factor: factor for interpolation (must be integer)
+        :return: interpolated 1D vector by a given factor
     """
     x = np.arange(np.size(vector))
     y = vector
@@ -106,8 +110,14 @@ def interpolate_1d_vector(vector, factor):
     return y_interpolated
 
 
-# Signal load and pre-elaboration
 def set_element(file, dir):
+
+    """
+       Signal load and pre-elaboration
+       :param file: name of the file to be processed
+       :param dir : name of the file's directory
+       :return: data vector that represent the signal
+    """
     x = []
     y = []
     z = []
@@ -154,8 +164,11 @@ def set_element(file, dir):
     return data
 
 
-# Cycle of signal elaboration
 def list_dir():
+    """
+      Cycle of signal elaboration
+       :return: data vector that represent the signal
+    """
     data = []
     target = []
     cont = -1
@@ -175,8 +188,12 @@ def list_dir():
     return data, target
 
 
-# Function that save a dataset and target
 def save_direct(direct, targ):
+    """
+      function that save a pre-elaborate dataset into a pickel
+    :param direct: the pre-elaborate dataset to save
+    :param targ: the target of the dataset to save
+    """
     # Salvataggio DATASET & TARGET
     print(f'SALVATAGIO DATASET IN CORSO...')
     np.save('Dataset_Pickel/Dataset1800_86', direct)
@@ -191,8 +208,11 @@ def save_direct(direct, targ):
     print(f'SALVATAGIO DATASET TERMINATO.')
 
 
-# Function that open a saved dataset and target
 def open_direct():
+    """
+    function that open a pre-saved dataset from the pickel
+    :return: pre-elaborate dataset and target
+    """
     # Recupero DATASET & TARGET
     print(f'RECUPERO DATASET IN CORSO...')
     deserialized_a = np.load('Dataset_Pickel/Dataset1800_86.npy', allow_pickle=True, mmap_mode='rb')
