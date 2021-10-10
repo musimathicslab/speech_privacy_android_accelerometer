@@ -8,11 +8,14 @@ from scipy import signal
 import tensorflow as tf
 
 
-'''FILTRO PASSA ALTO
-  it divide the signal of speech from that of movements'''
-
-
 def high_pass_filter(x, cutoff):
+    """
+      FILTRO PASSA ALTO
+      it divide the signal of speech from that of movements
+      :param x: one of the axis of the data in vector form
+      :param cutoff: integer that represent limit of the cutoff
+      :return: the data with cutoff application
+    """
     fs = len(x)
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
@@ -29,12 +32,12 @@ def high_pass_filter(x, cutoff):
     return rec
 
 
-'''Function for generate a spectrogram from a signal
-   :param vector: the signal
-   :return: the spectogram of signal'''
-
-
 def get_spectrogram(waveform):
+    """
+       Function for generate a spectrogram from a signal
+       :param waveform: the signal
+       :return: the spectrogram of signal
+    """
     spectrogram = tf.signal.stft(
         waveform, frame_length=50, frame_step=128)
 
@@ -43,15 +46,14 @@ def get_spectrogram(waveform):
     return spectrogram
 
 
-'''Function of interpolation
-    Interpolate, i.e. upsample, a given 1D vector by a specific interpolation factor.
-    :param vector: 1D data vector
-    :param factor: factor for interpolation (must be integer)
-    :return: interpolated 1D vector by a given factor
-    '''
-
-
 def interpolate_1d_vector(vector, factor):
+    """
+       Function of interpolation
+        Interpolate, i.e. upsample, a given 1D vector by a specific interpolation factor.
+        :param vector: 1D data vector
+        :param factor: factor for interpolation (must be integer)
+        :return: interpolated 1D vector by a given factor
+    """
 
     x = np.arange(np.size(vector))
     y = vector
@@ -68,14 +70,14 @@ def interpolate_1d_vector(vector, factor):
     return y_interpolated
 
 
-'''Signal load and pre-elaboration
-   :param vector of x: vector of x axis
-   :param vector of y: vector of y axis
-   :param vector of z: vector of z axis
-   :return: data vector that represent the signal'''
-
-
 def set_element(x, y, z):
+    """
+       Signal load and pre-elaboration
+       :param x: vector of x axis
+       :param y: vector of y axis
+       :param z: vector of z axis
+       :return: data vector that represent the signal
+    """
     x = x
     y = y
     z = z
@@ -111,14 +113,14 @@ def set_element(x, y, z):
         return None
 
 
-'''Cycle of signal elaboration
-   :param vector of x: vector of x axis
-   :param vector of y: vector of y axis
-   :param vector of z: vector of z axis
-   :return: data vector that represent the signal'''
-
-
 def list_dir(x, y, z):
+    """
+       Cycle of signal elaboration
+       :param x: vector of x axis
+       :param y: vector of y axis
+       :param z: vector of z axis
+       :return: data vector that represent the signal
+    """
     data = []
     w = set_element(x, y, z)
     if w is not None:
@@ -136,17 +138,17 @@ def perc_prediction(pred):
     return e_x / e_x.sum()
 
 
-'''Search for a speech and accuracy assignment
-   :param vector of x: vector of x axis
-   :param vector of y: vector of y axis
-   :param vector of z: vector of z axis
-   :param vector of t: vector of time axis
-   :param integer: start of signal segment
-   :param integer: end of signal segment
-   :returns: speeches, accuracy, efficacy of segment'''
-
-
 def cromosoma(t, x, y, z, seg_start, seg_end):
+    """
+      Search for a speech and accuracy assignment
+       :param x: vector of x axis
+       :param y: vector of y axis
+       :param z: vector of z axis
+       :param t: vector of time axis
+       :param seg_start: integer tha represent the start of signal segment
+       :param seg_end: integer tha represent the end of signal segment
+       :returns: speeches, accuracy, efficacy of segment
+    """
     x1 = []
     y1 = []
     z1 = []
@@ -182,17 +184,17 @@ def cromosoma(t, x, y, z, seg_start, seg_end):
         return -1, 0, 0
 
 
-'''Definition of the efficiency of a solution
-   :param vector of x: vector of x axis
-   :param vector of y: vector of y axis
-   :param vector of z: vector of z axis
-   :param vector of t: vector of time axis
-   :param integer: start of signal segment
-   :param integer: end of signal segment
-   :returns: speeches, accuracy, efficacy of all the signals solution'''
-
-
 def fit_function(t, x, y, z, x_start, x_end):
+    """
+       Definition of the efficiency of a solution
+       :param x: vector of x axis
+       :param y: vector of y axis
+       :param z: vector of z axis
+       :param t: vector of time axis
+       :param x_start : integer tha represent the start of signal segment
+       :param x_end: integer tha represent the end of signal segment
+       :returns: speeches, accuracy, efficacy of all the signals solution
+    """
     print(f'Search Speech')
     if np.size(x_start)>0 and np.size(x_end)>0:
         fitness= np.empty(shape=(len(x_start), 5), dtype='object')
@@ -223,14 +225,14 @@ def fit_function(t, x, y, z, x_start, x_end):
         return None, None, None
 
 
-'''Creation of first solution's population
-   :param directory: dir of a file
-   :param string: name of the file
-   :param integer: number of persons in the population
-   :returns: vectors that represent the first population of segmentation'''
-
-
 def population(directory, file, gene):
+    """
+      Creation of first solution's population
+       :param directory: dir of a file
+       :param file: name of the file
+       :param gene: integer that represent the number of persons in the population
+       :returns: vectors that represent the first population of segmentation
+    """
     print(f'first population: !!!START!!!')
     t = []
     x = []
@@ -287,12 +289,12 @@ def population(directory, file, gene):
     return pop, t, x, y, z
 
 
-'''Generate a Table of best K solution in growing order
-   :param vector: vector of the solutions
-   :return: vector in growing order'''
-
-
 def selection_sort(a):
+    """
+       Generate a Table of best K solution in growing order
+       :param a: vector of the solutions
+       :return: vector in growing order
+    """
     v = []
     for elem in a:
         v.append(elem)
@@ -312,12 +314,12 @@ def selection_sort(a):
     return v
 
 
-'''Generate a Table of best K solution in decreasing order
-:param vector: vector of the solutions
-   :return: vector in decreasing order'''
-
-
 def selection_sort2(a):
+    """
+       Generate a Table of best K solution in decreasing order
+       :param a: vector of the solutions
+       :return: vector in decreasing order
+    """
     v = []
     for elem in a:
         v.append(elem)
@@ -337,14 +339,14 @@ def selection_sort2(a):
     return v
 
 
-'''Function that took two consecutive people of the population, divides each person's solution into two halves and
-  combine half of one with half of the other and the other way around
-  :param vector: first person
-  :param vector: second person
-  :returns: the two person merged each other'''
-
-
 def crossover(p1, p2):
+    """
+    Function that took two consecutive people of the population, divides each person's solution into two halves and
+      combine half of one with half of the other and the other way around
+      :param p1: vector that represent a person population 
+      :param p2: vector that represent a person population 
+      :returns: the two person merged each other
+    """
     print(f'Crossover: !!!START!!!')
     pcross1 = []
     pcross2 = []
@@ -409,12 +411,12 @@ def crossover(p1, p2):
     return pcross1, pcross2
 
 
-'''Function that divide a segment into a random segment's point
-   :param vector: a person of the solution's population
-   :return: vector of the changed person'''
-
-
 def mutation_division(p):
+    """
+       Function that divide a segment into a random segment's point
+       :param p: vector that represent a person of the solution's population
+       :return: vector of the changed person
+    """
     print(f'Mutation division: !!!START!!!')
     p1= []
     x_starts= []
@@ -444,12 +446,12 @@ def mutation_division(p):
     return p1
 
 
-''' Function that join two segment in one
-    :param vector: a person of the population
-    :return: changed person'''
-
-
 def mutation_join(p):
+    """ 
+       Function that join two segment in one
+        :param p: vector that represent a person of the population
+        :return: changed person
+    """
     print(f'Mutaion Join: !!!START!!!')
     p1= []
     x_starts= []
@@ -490,16 +492,16 @@ def mutation_join(p):
     return p1
 
 
-''' Function that create a mutation of a segment
- Mutation:- left shift
-          - right shift
-          - join
-          -division
- :param vector: the person of the solution's population
- :return: changed person'''
-
-
 def mutation_random(p):
+    """ 
+       Function that create a mutation of a segment
+       Mutation:- left shift
+              - right shift
+              - join
+              -division
+       :param p: vector that represent the person of the solution's population
+       :return: changed person
+    """
     print(f'Mutation: !!!START!!!')
     p1= []
     x_starts = []
@@ -588,13 +590,12 @@ def mutation_random(p):
     return p1
 
 
-'''Function that generate a graphic which represent the behaviour of accuracy
-   :param vector: population result of the segmentation
-   :param string: message to print
-   :return: '''
-
-
 def generate_graphic(a, msg):
+    """
+      Function that generate a graphic which represent the behaviour of accuracy
+       :param a: vector that represent the population result of the segmentation
+       :param msg: message to print
+    """
     x_axis = []
     y_axis = []
     y1_axis = []
@@ -621,15 +622,17 @@ def generate_graphic(a, msg):
 if __name__ == '__main__':
 
     print("\nOpen file")
+
     # Parameter definition
     gene=500
     epoch=100
     k=30
-    # Elaboration of FILE
+
+    # Elaboration of FILE and building of the first population
     P_first, t, x, y, z = population('SegmentationFile', 'frase12.csv', gene)
     print(f'first population: {P_first}')
 
-    # Elaboration result of first population
+    # Elaboration of first population
     P_fit=[]
     for p in P_first:
         elem_p=[]
@@ -640,6 +643,7 @@ if __name__ == '__main__':
             elem_p.append(eff)
             P_fit.append(elem_p)
 
+    # result of first population
     generate_graphic(P_fit, 'of first population')
 
     print(f'Table: !!!START!!!')
