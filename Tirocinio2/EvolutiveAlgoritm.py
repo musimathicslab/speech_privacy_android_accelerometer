@@ -8,19 +8,19 @@ from scipy import signal
 import tensorflow as tf
 
 
-def high_pass_filter(x, cutoff):
+def high_pass_filter(x_filter, cutoff):
     """
-      FILTRO PASSA ALTO
+      High Pass Filter
       it divide the signal of speech from that of movements
-      :param x: one of the axis of the data in vector form
+      :param x_filter: one of the axis of the data in vector form
       :param cutoff: integer that represent limit of the cutoff
       :return: the data with cutoff application
     """
-    fs = len(x)
+    fs = len(x_filter)
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
 
-    f, t, zxx = signal.stft(x)
+    f, t_filter, zxx = signal.stft(x_filter)
 
     for n in range(0, len(f)):
         if f[n] <= normal_cutoff:
@@ -49,102 +49,102 @@ def get_spectrogram(waveform):
 def interpolate_1d_vector(vector, factor):
     """
        Function of interpolation
-        Interpolate, i.e. upsample, a given 1D vector by a specific interpolation factor.
+        Interpolate, i.e. up sample, a given 1D vector by a specific interpolation factor.
         :param vector: 1D data vector
         :param factor: factor for interpolation (must be integer)
         :return: interpolated 1D vector by a given factor
     """
 
-    x = np.arange(np.size(vector))
-    y = vector
-    f = scipy.interpolate.interp1d(x, y)
+    x_interpolate = np.arange(np.size(vector))
+    y_interpolate = vector
+    f = scipy.interpolate.interp1d(x_interpolate, y_interpolate)
 
-    x_extended_by_factor = np.linspace(x[0], x[-1], np.size(x) * factor)
+    x_extended_by_factor = np.linspace(x_interpolate[0], x_interpolate[-1], np.size(x_interpolate) * factor)
     y_interpolated = np.zeros(np.size(x_extended_by_factor))
 
     i = 0
-    for x in x_extended_by_factor:
-        y_interpolated[i] = f(x)
+    for x_interpolate in x_extended_by_factor:
+        y_interpolated[i] = f(x_interpolate)
         i += 1
 
     return y_interpolated
 
 
-def set_element(x, y, z):
+def set_element(x_set, y_set, z_set):
     """
        Signal load and pre-elaboration
-       :param x: vector of x axis
-       :param y: vector of y axis
-       :param z: vector of z axis
-       :return: data vector that represent the signal
+       :param x_set: vector of x axis
+       :param y_set: vector of y axis
+       :param z_set: vector of z axis
+       :return: data_set vector that represent the signal
     """
-    x = x
-    y = y
-    z = z
-    data = []
+    x_set = x_set
+    y_set = y_set
+    z_set = z_set
+    data_set = []
 
-    if len(x) >= 50:
+    if len(x_set) >= 50:
 
-        x = list(interpolate_1d_vector(x, 3))
-        y = list(interpolate_1d_vector(y, 3))
-        z = list(interpolate_1d_vector(z, 3))
+        x_set = list(interpolate_1d_vector(x_set, 3))
+        y_set = list(interpolate_1d_vector(y_set, 3))
+        z_set = list(interpolate_1d_vector(z_set, 3))
 
-        x = high_pass_filter(x, 80)
-        y = high_pass_filter(y, 80)
-        z = high_pass_filter(z, 80)
+        x_set = high_pass_filter(x_set, 80)
+        y_set = high_pass_filter(y_set, 80)
+        z_set = high_pass_filter(z_set, 80)
 
-        x = get_spectrogram(x)
-        y = get_spectrogram(y)
-        z = get_spectrogram(z)
+        x_set = get_spectrogram(x_set)
+        y_set = get_spectrogram(y_set)
+        z_set = get_spectrogram(z_set)
 
         elem = []
 
-        for n in range(0, len(x)):
-            for i in range(0, len(x[n])):
-                elem.append([math.sqrt(x[n][i]), math.sqrt(y[n][i]), math.sqrt(z[n][i])])
-            data.append(elem)
+        for n in range(0, len(x_set)):
+            for i in range(0, len(x_set[n])):
+                elem.append([math.sqrt(x_set[n][i]), math.sqrt(y_set[n][i]), math.sqrt(z_set[n][i])])
+            data_set.append(elem)
             elem = []
-        data = np.asarray(data)
-        pil_img = tf.keras.preprocessing.image.array_to_img(data)
-        data = tf.keras.preprocessing.image.img_to_array(pil_img)
-        data = tf.image.resize(data, [224, 224])
-        return data
+        data_set = np.asarray(data_set)
+        pil_img = tf.keras.preprocessing.image.array_to_img(data_set)
+        data_set = tf.keras.preprocessing.image.img_to_array(pil_img)
+        data_set = tf.image.resize(data_set, [224, 224])
+        return data_set
     else:
         return None
 
 
-def list_dir(x, y, z):
+def list_dir(x_dir, y_dir, z_dir):
     """
        Cycle of signal elaboration
-       :param x: vector of x axis
-       :param y: vector of y axis
-       :param z: vector of z axis
-       :return: data vector that represent the signal
+       :param x_dir: vector of x axis
+       :param y_dir: vector of y axis
+       :param z_dir: vector of z axis
+       :return: data_list vector that represent the signal
     """
-    data = []
-    w = set_element(x, y, z)
+    data_list = []
+    w = set_element(x_dir, y_dir, z_dir)
     if w is not None:
         if len(w) > 0:
-            data.append(w)
-        data = np.asarray(data)
-        return data
+            data_list.append(w)
+        data_list = np.asarray(data_list)
+        return data_list
     else:
         return None
 
 
 # extrapolation of percent data
-def perc_prediction(pred):
-    e_x = np.exp(pred - np.max(pred))
+def percent_prediction(prediction):
+    e_x = np.exp(prediction - np.max(prediction))
     return e_x / e_x.sum()
 
 
-def cromosoma(t, x, y, z, seg_start, seg_end):
+def chromosome(t_c, x_c, y_c, z_c, seg_start, seg_end):
     """
       Search for a speech and accuracy assignment
-       :param x: vector of x axis
-       :param y: vector of y axis
-       :param z: vector of z axis
-       :param t: vector of time axis
+       :param x_c: vector of x axis
+       :param y_c: vector of y axis
+       :param z_c: vector of z axis
+       :param t_c: vector of time axis
        :param seg_start: integer tha represent the start of signal segment
        :param seg_end: integer tha represent the end of signal segment
        :returns: speeches, accuracy, efficacy of segment
@@ -152,45 +152,44 @@ def cromosoma(t, x, y, z, seg_start, seg_end):
     x1 = []
     y1 = []
     z1 = []
-    tmp =0
     i = 0
-    for e in range(0, len(t)):
-        if t[e]==seg_start:
+    for e in range(0, len(t_c)):
+        if t_c[e]==seg_start:
             i=e
 
-    while i < len(x) and t[i] <= seg_end:
-        x1.append(x[i])
-        y1.append(y[i])
-        z1.append(z[i])
+    while i < len(x_c) and t_c[i] <= seg_end:
+        x1.append(x_c[i])
+        y1.append(y_c[i])
+        z1.append(z_c[i])
         i = i+1
 
     speech = list_dir(x1, y1, z1)
     if speech is not None:
         loaded_model = tf.keras.models.load_model('ReteSpeechModels/Result_Test34')
         prediction = loaded_model.predict(speech)
-        y_pred = np.argmax(prediction)
-        prediction_perc = perc_prediction(prediction)
-        acc_y_pred = prediction_perc[0][y_pred]*100
+        y_prediction = np.argmax(prediction)
+        prediction_percent = percent_prediction(prediction)
+        acc_y_predict = prediction_percent[0][y_prediction] * 100
         prediction_media = 0.0
-        for e in prediction_perc[0]:
-            if e != prediction_perc[0][y_pred]:
+        for e in prediction_percent[0]:
+            if e != prediction_percent[0][y_prediction]:
                 prediction_media = prediction_media + e
 
-        prediction_media = prediction_media / (len(prediction_perc[0]) - 1)
-        efficacy_pred = acc_y_pred - (prediction_media * 100)
+        prediction_media = prediction_media / (len(prediction_percent[0]) - 1)
+        efficacy_predict = acc_y_predict - (prediction_media * 100)
 
-        return y_pred, acc_y_pred, efficacy_pred
+        return y_prediction, acc_y_predict, efficacy_predict
     else:
         return -1, 0, 0
 
 
-def fit_function(t, x, y, z, x_start, x_end):
+def fit_function(t_fit, x_fit, y_fit, z_fit, x_start, x_end):
     """
        Definition of the efficiency of a solution
-       :param x: vector of x axis
-       :param y: vector of y axis
-       :param z: vector of z axis
-       :param t: vector of time axis
+       :param x_fit: vector of x axis
+       :param y_fit: vector of y axis
+       :param z_fit: vector of z axis
+       :param t_fit: vector of time axis
        :param x_start : integer tha represent the start of signal segment
        :param x_end: integer tha represent the end of signal segment
        :returns: speeches, accuracy, efficacy of all the signals solution
@@ -200,21 +199,22 @@ def fit_function(t, x, y, z, x_start, x_end):
         fitness= np.empty(shape=(len(x_start), 5), dtype='object')
         elem=0
         while elem <len(x_start):
-            y_pred, acc_y_pred, efficacy_pred = cromosoma(t, x, y, z, x_start[elem], x_end[elem])
+            y_predict, acc_y_predict, efficacy_predict = chromosome(t_fit, x_fit, y_fit, z_fit,
+                                                                    x_start[elem], x_end[elem])
             fitness[elem][0]= x_start[elem]
             fitness[elem][1]= x_end[elem]
-            fitness[elem][2]= y_pred
-            fitness[elem][3]= acc_y_pred
-            fitness[elem][4]= efficacy_pred
+            fitness[elem][2]= y_predict
+            fitness[elem][3]= acc_y_predict
+            fitness[elem][4]= efficacy_predict
             elem=elem+1
 
         media_acc = 0
         media_efficacy = 0
         for e in fitness:
-            acc= e[3]
-            eff= e[4]
-            media_acc = media_acc + acc
-            media_efficacy = media_efficacy + eff
+            acc_fit = e[3]
+            eff_fit= e[4]
+            media_acc = media_acc + acc_fit
+            media_efficacy = media_efficacy + eff_fit
 
         media_acc = media_acc / len(fitness)
         media_efficacy = media_efficacy / len(fitness)
@@ -225,19 +225,19 @@ def fit_function(t, x, y, z, x_start, x_end):
         return None, None, None
 
 
-def population(directory, file, gene):
+def population(directory, file, gene_pop):
     """
       Creation of first solution's population
        :param directory: dir of a file
        :param file: name of the file
-       :param gene: integer that represent the number of persons in the population
+       :param gene_pop: integer that represent the number of persons in the population
        :returns: vectors that represent the first population of segmentation
     """
     print(f'first population: !!!START!!!')
-    t = []
-    x = []
-    y = []
-    z = []
+    t_pop = []
+    x_pop = []
+    y_pop = []
+    z_pop = []
     pop=[]
 
     with open(directory + '/' + file, 'r') as csv_file:
@@ -246,47 +246,47 @@ def population(directory, file, gene):
         for line in csv_reader:
             if 'TIME' not in line:
                 elem = float(line[0])
-                t.append(elem)
+                t_pop.append(elem)
                 elem = float(line[1])
-                x.append(elem)
+                x_pop.append(elem)
                 elem = float(line[2])
-                y.append(elem)
+                y_pop.append(elem)
                 elem = float(line[3])
-                z.append(elem)
+                z_pop.append(elem)
 
-    for i in range(0, gene):
+    for i in range(0, gene_pop):
 
         tmp_div= random.uniform(0.2, 0.5)
         tmp=0
-        p = []
+        person = []
         x_starts = []
         x_ends = []
         fine=-1
-        while tmp<=t[len(t)-1]:
+        while tmp<=t_pop[len(t_pop) - 1]:
             x_start=tmp
             tmp = tmp + tmp_div
-            if tmp <=t[len(t)-1]:
+            if tmp <=t_pop[len(t_pop) - 1]:
                 x_end=tmp
             else:
-                x_end=t[len(t)-1]
+                x_end=t_pop[len(t_pop) - 1]
 
             x_starts.append(x_start)
             x_ends.append(x_end)
             fine=fine+1
 
-        if x_ends[fine]<t[len(t)-1]:
+        if x_ends[fine]<t_pop[len(t_pop) - 1]:
             x_start = x_ends[fine]
-            x_end = t[len(t)-1]
+            x_end = t_pop[len(t_pop) - 1]
             x_starts.append(x_start)
             x_ends.append(x_end)
 
-        p.append(x_starts)
-        p.append(x_ends)
-        pop.append(p)
+        person.append(x_starts)
+        person.append(x_ends)
+        pop.append(person)
 
     print(f'first population: !!!END!!!')
 
-    return pop, t, x, y, z
+    return pop, t_pop, x_pop, y_pop, z_pop
 
 
 def selection_sort(a):
@@ -325,16 +325,16 @@ def selection_sort2(a):
         v.append(elem)
 
     for ind in range(0, len(v)):
-        minimo = ind
+        minimum = ind
         for M in range(ind+1, len(v)):
             s1=v[M]
-            s2=v[minimo]
+            s2=v[minimum]
             if len(s1[0]) <= len(s2[0]):
-                minimo = M
+                minimum = M
 
         temporary=v[ind]
-        v[ind]=v[minimo]
-        v[minimo]=temporary
+        v[ind]=v[minimum]
+        v[minimum]=temporary
 
     return v
 
@@ -343,13 +343,13 @@ def crossover(p1, p2):
     """
     Function that took two consecutive people of the population, divides each person's solution into two halves and
       combine half of one with half of the other and the other way around
-      :param p1: vector that represent a person population 
-      :param p2: vector that represent a person population 
+      :param p1: vector that represent a person population
+      :param p2: vector that represent a person population
       :returns: the two person merged each other
     """
     print(f'Crossover: !!!START!!!')
-    pcross1 = []
-    pcross2 = []
+    p_cross1 = []
+    p_cross2 = []
     data1 = []
     data2 = []
     for e in p1:
@@ -401,31 +401,31 @@ def crossover(p1, p2):
     for el4 in x_ends1:
         x_ends2.append(el4)
 
-    pcross1.append(x_starts)
-    pcross1.append(x_ends)
-    pcross2.append(x_starts2)
-    pcross2.append(x_ends2)
+    p_cross1.append(x_starts)
+    p_cross1.append(x_ends)
+    p_cross2.append(x_starts2)
+    p_cross2.append(x_ends2)
 
     print(f'Crossover: !!!END!!!')
 
-    return pcross1, pcross2
+    return p_cross1, p_cross2
 
 
-def mutation_division(p):
+def mutation_division(p_mut_div):
     """
        Function that divide a segment into a random segment's point
-       :param p: vector that represent a person of the solution's population
+       :param p_mut_div: vector that represent a person of the solution's population
        :return: vector of the changed person
     """
     print(f'Mutation division: !!!START!!!')
     p1= []
     x_starts= []
     x_ends= []
-    data =[]
-    for e in p:
-        data.append(e)
+    data_mut_div =[]
+    for e in p_mut_div:
+        data_mut_div.append(e)
 
-    for seg in data:
+    for seg in data_mut_div:
         x_start= seg[0]
         x_end= seg[1]
         if x_end-x_start>=0.4:
@@ -446,38 +446,38 @@ def mutation_division(p):
     return p1
 
 
-def mutation_join(p):
-    """ 
+def mutation_join(p_mut_join):
+    """
        Function that join two segment in one
-        :param p: vector that represent a person of the population
+        :param p_mut_join: vector that represent a person of the population
         :return: changed person
     """
-    print(f'Mutaion Join: !!!START!!!')
+    print(f'Mutation Join: !!!START!!!')
     p1= []
     x_starts= []
     x_ends= []
-    data =[]
-    for e in p:
-        data.append(e)
+    data_mut_join =[]
+    for e in p_mut_join:
+        data_mut_join.append(e)
 
     cont=0
-    while cont<len(data):
-        if cont+1<len(data):
-            seg1=data[cont]
-            seg2=data[cont+1]
+    while cont<len(data_mut_join):
+        if cont+1<len(data_mut_join):
+            seg1=data_mut_join[cont]
+            seg2=data_mut_join[cont + 1]
             x_start= seg1[0]
             x_end= seg2[1]
             if (x_end-x_start)<2.0:
                 x_starts.append(x_start)
                 x_ends.append(x_end)
             else:
-                seg1 = data[cont]
+                seg1 = data_mut_join[cont]
                 x_start = seg1[0]
                 x_end = seg1[1]
                 x_starts.append(x_start)
                 x_ends.append(x_end)
         else:
-            seg1 = data[cont]
+            seg1 = data_mut_join[cont]
             x_start = seg1[0]
             x_end = seg1[1]
             x_starts.append(x_start)
@@ -492,27 +492,27 @@ def mutation_join(p):
     return p1
 
 
-def mutation_random(p):
-    """ 
+def mutation_random(p_mut_random):
+    """
        Function that create a mutation of a segment
        Mutation:- left shift
               - right shift
               - join
               -division
-       :param p: vector that represent the person of the solution's population
+       :param p_mut_random: vector that represent the person of the solution's population
        :return: changed person
     """
     print(f'Mutation: !!!START!!!')
     p1= []
     x_starts = []
     x_ends = []
-    data = []
-    for e in p:
-        data.append(e)
+    data_mut_random = []
+    for e in p_mut_random:
+        data_mut_random.append(e)
 
     elem=0
-    while elem<len(data):
-        fitness=data[elem]
+    while elem<len(data_mut_random):
+        fitness=data_mut_random[elem]
         x_start= fitness[0]
         x_end= fitness[1]
         mut = random.randint(0, 2)
@@ -538,12 +538,12 @@ def mutation_random(p):
                     x_ends.append(x_end)
             if shift==1:
                 print(f'Mutation: shift DX')
-                if elem+1<len(data):
+                if elem+1<len(data_mut_random):
                     if x_end>t[len(t)-1]+0.2:
                         x_end2= x_end+0.2
-                        fitness = data[elem + 1]
+                        fitness = data_mut_random[elem + 1]
                         fitness[0]=fitness[0]+0.2
-                        data[elem + 1]= fitness
+                        data_mut_random[elem + 1]= fitness
                         x_starts=x_start
                         x_ends.append(x_end2)
                     else:
@@ -573,8 +573,8 @@ def mutation_random(p):
             # two consecutive segments
             print(f'Mutation: join')
             x_starts.append(x_start)
-            if elem + 1 < len(data):
-                fitness1 = data[elem + 1]
+            if elem + 1 < len(data_mut_random):
+                fitness1 = data_mut_random[elem + 1]
                 x_end1 = fitness1[1]
                 x_ends.append(x_end1)
                 elem= elem + 1
@@ -607,7 +607,7 @@ def generate_graphic(a, msg):
 
     plt.axis([0, x_axis[len(x_axis) - 1], 0, 100])
     plt.grid()
-    plt.xticks([1 * k for k in range(0, len(x_axis))])
+    plt.xticks([1 * n for n in range(0, len(x_axis))])
     plt.yticks([10 * j for j in range(0, 10)])
     fr='trend of accuracy and efficacy '+msg
     plt.title(fr)
@@ -619,17 +619,90 @@ def generate_graphic(a, msg):
     plt.show()
 
 
+def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
+    """Evolutionary cycle that provide to modify the population's segments with evolutionary mutation and crossover
+       :param x_evo: vector of x axis
+       :param y_evo: vector of y axis
+       :param z_evo: vector of z axis
+       :param t_evo: vector of time axis
+       :param pop: first generated population
+       :param epoch_evo: number of evolutionary cycle
+       :param k_best: number that defined the best solution to take for the next evolution cycle
+       :return: the final population after the progressive evolution"""
+    leader_evolution=pop
+    # Evolution Cycle
+    for i in range(0, epoch_evo):
+        if i == int(epoch_evo/2):
+            s = 'after some iterations'
+            generate_graphic(leader_evolution, s)
+        print(f'EPOCH: {i + 1}')
+        P_new = []
+        best_P = []
+        for j in range(0, k_best):
+            best_P.append(leader_evolution[j])
+            print(f'Position: {j}-->')
+            print(f'Population: {leader_evolution[j]}<--')
+
+        u = 0
+        for ind in range(0, len(best_P) - 1):
+            u = u + 1
+            print(f'Evolution: {u}')
+            sol = best_P[ind]
+
+            if ind < len(best_P) - 1:
+                sol1 = best_P[i + 1]
+                p_cross, p_cross1 = crossover(sol[0], sol1[0])
+            else:
+                sol1 = best_P[0]
+                p_cross, p_cross1 = crossover(sol[0], sol1[0])
+
+            p_div = mutation_division(sol[0])
+            # p_join= mutation_join(sol[0])
+            p_mutation = mutation_random(sol[0])
+            P_old = []
+            end_old = []
+            start_old = []
+            for e in sol[0]:
+                start_old.append(e[0])
+                end_old.append(e[1])
+
+            P_old.append(start_old)
+            P_old.append(end_old)
+            P_new.append(P_old)
+            P_new.append(p_cross)
+            P_new.append(p_cross1)
+            P_new.append(p_div)
+            # P_new.append(p_join)
+            P_new.append(p_mutation)
+
+        P_fit_new = []
+        for person in P_new:
+            elem_person = []
+            solution_person, acc_person, eff_person = fit_function(t_evo, x_evo, y_evo, z_evo, person[0], person[1])
+            if solution_person is not None or acc_person is not None or eff_person is not None:
+                elem_person.append(solution_person)
+                elem_person.append(acc_person)
+                elem_person.append(eff_person)
+                P_fit_new.append(elem_person)
+
+        print(f'Table: !!!START!!!')
+        leader_evolution = selection_sort(P_fit_new)
+        print(f'Table: !!!END!!!')
+
+    return leader_evolution
+
+
 if __name__ == '__main__':
 
     print("\nOpen file")
 
     # Parameter definition
     gene=500
-    epoch=100
+    epoch=200
     k=30
 
     # Elaboration of FILE and building of the first population
-    P_first, t, x, y, z = population('SegmentationFile', 'frase12.csv', gene)
+    P_first, t, x, y, z = population('SegmentationFile', 'frase121.csv', gene)
     print(f'first population: {P_first}')
 
     # Elaboration of first population
@@ -650,65 +723,8 @@ if __name__ == '__main__':
     leader=selection_sort(P_fit)
     print(f'Table: !!!END!!!')
 
-    # Evolution Cycle
-    for i in range(0, epoch):
-        if i==25 or i==50:
-            s= 'after some iterations'
-            generate_graphic(leader, s)
-        print(f'EPOCH: {i+1}')
-        P_new = []
-        best_P=[]
-        for j in range(0, k):
-            best_P.append(leader[j])
-            print(f'Position: {j}-->')
-            print(f'Population: {leader[j]}<--')
-
-        u=0
-        for i in range(0, len(best_P)-1):
-            u = u + 1
-            print(f'Evolution: {u}')
-            sol=best_P[i]
-
-            if i<len(best_P)-1:
-                sol1=best_P[i+1]
-                p_cross, p_cross1=crossover(sol[0], sol1[0])
-            else:
-                sol1=best_P[0]
-                p_cross, p_cross1 = crossover(sol[0], sol1[0])
-
-            p_div= mutation_division(sol[0])
-            # p_join= mutation_join(sol[0])
-            p_mutation=mutation_random(sol[0])
-            P_old=[]
-            end_old=[]
-            start_old=[]
-            for e in sol[0]:
-                start_old.append(e[0])
-                end_old.append(e[1])
-
-            P_old.append(start_old)
-            P_old.append(end_old)
-            P_new.append(P_old)
-            P_new.append(p_cross)
-            P_new.append(p_cross1)
-            P_new.append(p_div)
-            # P_new.append(p_join)
-            P_new.append(p_mutation)
-
-        P_fit_new = []
-        for p in P_new:
-            elem_p = []
-            solution, acc, eff = fit_function(t, x, y, z, p[0], p[1])
-            if solution is not None or acc is not None or eff is not None:
-                elem_p.append(solution)
-                elem_p.append(acc)
-                elem_p.append(eff)
-                P_fit_new.append(elem_p)
-
-        print(f'Table: !!!START!!!')
-        leader = selection_sort(P_fit_new)
-        print(f'Table: !!!END!!!')
-
+    # evolution cycle
+    leader= evolution_cycle(t, x, y, z, leader, epoch, k)
     generate_graphic(leader, 'at the end of solution')
 
     # Sending result
