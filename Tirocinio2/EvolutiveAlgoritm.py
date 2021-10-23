@@ -607,7 +607,7 @@ def generate_graphic(a, msg):
 
     plt.axis([0, x_axis[len(x_axis) - 1], 0, 100])
     plt.grid()
-    plt.xticks([1 * n for n in range(0, len(x_axis))])
+    plt.xticks([2 * n for n in range(0, 25)])
     plt.yticks([10 * j for j in range(0, 10)])
     fr='trend of accuracy and efficacy '+msg
     plt.title(fr)
@@ -639,9 +639,10 @@ def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
         P_new = []
         best_P = []
         for j in range(0, k_best):
-            best_P.append(leader_evolution[j])
-            print(f'Position: {j}-->')
-            print(f'Population: {leader_evolution[j]}<--')
+            if k_best<len(leader_evolution):
+                best_P.append(leader_evolution[j])
+                print(f'Position: {j}-->')
+                print(f'Population: {leader_evolution[j]}<--')
 
         u = 0
         for ind in range(0, len(best_P) - 1):
@@ -650,7 +651,7 @@ def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
             sol = best_P[ind]
 
             if ind < len(best_P) - 1:
-                sol1 = best_P[i + 1]
+                sol1 = best_P[ind + 1]
                 p_cross, p_cross1 = crossover(sol[0], sol1[0])
             else:
                 sol1 = best_P[0]
@@ -701,7 +702,7 @@ if __name__ == '__main__':
     epoch=200
     k=30
 
-    # Elaboration of FILE and building of the first population
+    # Elaboration FILE and building of the first population
     P_first, t, x, y, z = population('SegmentationFile', 'frase121.csv', gene)
     print(f'first population: {P_first}')
 
