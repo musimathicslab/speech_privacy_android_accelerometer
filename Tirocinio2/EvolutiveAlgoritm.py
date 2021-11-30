@@ -134,6 +134,7 @@ def list_dir(x_dir, y_dir, z_dir):
 
 # extrapolation of percent data
 def percent_prediction(prediction):
+    """It transform a number into the corresponding percentage value"""
     e_x = np.exp(prediction - np.max(prediction))
     return e_x / e_x.sum()
 
@@ -446,52 +447,6 @@ def mutation_division(p_mut_div):
     return p1
 
 
-def mutation_join(p_mut_join):
-    """
-       Function that join two segment in one
-        :param p_mut_join: vector that represent a person of the population
-        :return: changed person
-    """
-    print(f'Mutation Join: !!!START!!!')
-    p1= []
-    x_starts= []
-    x_ends= []
-    data_mut_join =[]
-    for e in p_mut_join:
-        data_mut_join.append(e)
-
-    cont=0
-    while cont<len(data_mut_join):
-        if cont+1<len(data_mut_join):
-            seg1=data_mut_join[cont]
-            seg2=data_mut_join[cont + 1]
-            x_start= seg1[0]
-            x_end= seg2[1]
-            if (x_end-x_start)<2.0:
-                x_starts.append(x_start)
-                x_ends.append(x_end)
-            else:
-                seg1 = data_mut_join[cont]
-                x_start = seg1[0]
-                x_end = seg1[1]
-                x_starts.append(x_start)
-                x_ends.append(x_end)
-        else:
-            seg1 = data_mut_join[cont]
-            x_start = seg1[0]
-            x_end = seg1[1]
-            x_starts.append(x_start)
-            x_ends.append(x_end)
-
-        cont=cont+2
-
-    p1.append(x_starts)
-    p1.append(x_ends)
-    print(f'Mutation Join: !!!END!!!')
-
-    return p1
-
-
 def mutation_random(p_mut_random):
     """
        Function that create a mutation of a segment
@@ -524,7 +479,7 @@ def mutation_random(p_mut_random):
             if shift==0:
                 print(f'Mutation: shift SX')
                 if elem-1>0:
-                    if x_start>0.2:
+                    if x_start>0.2 and (x_end-x_start+0.2)<1.5:
                         x_start2=x_start-0.2
                         ind_last=len(x_ends)-1
                         x_ends[ind_last]= x_ends[ind_last] - 0.2
@@ -539,7 +494,7 @@ def mutation_random(p_mut_random):
             if shift==1:
                 print(f'Mutation: shift DX')
                 if elem+1<len(data_mut_random):
-                    if x_end>t[len(t)-1]+0.2:
+                    if x_end<=t[len(t)-1]-0.2 and (x_end-x_start+0.2)<1.5:
                         x_end2= x_end+0.2
                         fitness = data_mut_random[elem + 1]
                         fitness[0]=fitness[0]+0.2
@@ -576,8 +531,11 @@ def mutation_random(p_mut_random):
             if elem + 1 < len(data_mut_random):
                 fitness1 = data_mut_random[elem + 1]
                 x_end1 = fitness1[1]
-                x_ends.append(x_end1)
-                elem= elem + 1
+                if x_end1-x_start<1.5:
+                    x_ends.append(x_end1)
+                    elem= elem + 1
+                else:
+                    x_ends.append(x_end)
             else:
                 x_ends.append(x_end)
 
@@ -619,6 +577,7 @@ def generate_graphic(a, msg):
     plt.show()
 
 
+
 def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
     """Evolutionary cycle that provide to modify the population's segments with evolutionary mutation and crossover
        :param x_evo: vector of x axis
@@ -658,8 +617,8 @@ def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
                 p_cross, p_cross1 = crossover(sol[0], sol1[0])
 
             p_div = mutation_division(sol[0])
-            # p_join= mutation_join(sol[0])
             p_mutation = mutation_random(sol[0])
+            # verify module
             P_old = []
             end_old = []
             start_old = []
@@ -667,14 +626,18 @@ def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
                 start_old.append(e[0])
                 end_old.append(e[1])
 
+            limit= t_evo[len(t_evo)-1]/1.5
             P_old.append(start_old)
             P_old.append(end_old)
             P_new.append(P_old)
-            P_new.append(p_cross)
-            P_new.append(p_cross1)
-            P_new.append(p_div)
-            # P_new.append(p_join)
-            P_new.append(p_mutation)
+            if len(p_cross[0])>=limit:
+                P_new.append(p_cross)
+            if len(p_cross1[0])>=limit:
+                P_new.append(p_cross1)
+            if len(p_div[0])>=limit:
+                P_new.append(p_div)
+            if len(p_mutation[0])>=limit:
+                P_new.append(p_mutation)
 
         P_fit_new = []
         for person in P_new:
@@ -699,8 +662,8 @@ if __name__ == '__main__':
 
     # Parameter definition
     gene=500
-    epoch=200
-    k=30
+    epoch=500
+    k=50
 
     # Elaboration FILE and building of the first population
     P_first, t, x, y, z = population('SegmentationFile', 'frase121.csv', gene)

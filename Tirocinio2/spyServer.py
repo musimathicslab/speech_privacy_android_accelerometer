@@ -3,7 +3,9 @@ import random
 
 import flask
 import EvolutiveAlgoritm
+from multiprocessing import Pool
 
+# Dictionary
 speech = {"a", "all", "as", "be", "beau", "best", "birds", "bite", "book", "but", "by", "can", "cant", "co", "cy",
           "day", "der", "do", "done", "dont", "drink", "eye", "fea", "feeds", "fire", "flock", "free", "get", "gether",
           "hand", "have", "him", "hol", "home", "horse", "i", "if", "in", "is", "it", "its", "judge", "lead", "li",
@@ -13,6 +15,10 @@ speech = {"a", "all", "as", "be", "beau", "best", "birds", "bite", "book", "but"
 
 
 def divide_segment(directory, file):
+    """Function that divide the input signal into segment of max 10.00 second
+       :param directory: directory of the file
+       :param file: name of the file
+       :return: list of segment of 10 second"""
     t_seg = []
     x_seg = []
     y_seg = []
@@ -111,15 +117,41 @@ def population(t_pop, x_pop, y_pop, z_pop, gene_pop):
     return pop, t_pop, x_pop, y_pop, z_pop
 
 
-app = flask.Flask(__name__)
+def f(elem):
+    P_first, t, x, y, z = population(elem[0], elem[1], elem[2], elem[3], 500)
+    # Elaboration of first population
+    P_fit = []
+    for p in P_first:
+        elem_p = []
+        solution, acc, eff = EvolutiveAlgoritm.fit_function(t, x, y, z, p[0], p[1])
+        if solution is not None or acc is not None or eff is not None:
+            elem_p.append(solution)
+            elem_p.append(acc)
+            elem_p.append(eff)
+            P_fit.append(elem_p)
 
+    print(f'Table: !!!START!!!')
+    leader = EvolutiveAlgoritm.selection_sort(P_fit)
+    print(f'Table: !!!END!!!')
+    # evolution cycle
+    leader = EvolutiveAlgoritm.evolution_cycle(t, x, y, z, leader, 500, 50)
+    best_solution = leader[0]
+    data = best_solution[0]
+    accuracy = best_solution[1]
+    efficacy = best_solution[2]
+    result1 = [data, accuracy, efficacy]
+
+    return result1
+
+
+app = flask.Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def handle_request():
     # Parameter definition
     gene = 500
-    epoch = 100
-    k = 30
+    epoch = 500
+    k = 50
     result = []
 
     # FILE Reception
@@ -129,7 +161,7 @@ def handle_request():
     # FILE save
     fileCsv.save('ServerFile/'+fileCsv.filename)
     # FILE elaboration
-    segment= divide_segment('SegmentationFile', 'frase123.csv')
+    segment= divide_segment('ServerFile', fileCsv.filename)
     for elem in segment:
         P_first, t, x, y, z =population(elem[0], elem[1], elem[2], elem[3], gene)
         # Elaboration of first population
@@ -154,6 +186,9 @@ def handle_request():
         efficacy = best_solution[2]
         result1=[data, accuracy, efficacy]
         result.append(result1)
+
+    '''with Pool(processes=len(segment)) as p:
+        result.append(p.map(f, segment))'''
 
     # Sending result
     accuracy_final=0.0
