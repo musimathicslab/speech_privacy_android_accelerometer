@@ -145,8 +145,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                        "i","if","in", "is", "it","its","judge","lead","li", "like", "lunch","ma","make","mo","ne","no","ny","o","of","off", "place","po","pre","put", "right","rons","rrow", "self","sent", "some","sty","such","ter","that","the","ther",
                        "there", "thing","til","time", "to","too","ty","un","ver","wa", "want", "ways", "what", "you", "your","frasi1","frasi2","frasi3","frasi4"};
     String[] vocal = {"A","B","C","D","E"};
-    int[] risorse=new int[5];
-    int unit=0;
+    int[] risorse = new int[5];
+    int unit = 0;
     TextView responseTextTimer;
 
 
@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             }
         });
+
         scaletta2=findViewById(R.id.scaletta2);
         ArrayAdapter<String> adapter2 =new ArrayAdapter<String>(this,R.layout.element,R.id.elemento, vocal);
         scaletta2.setAdapter(adapter2);
