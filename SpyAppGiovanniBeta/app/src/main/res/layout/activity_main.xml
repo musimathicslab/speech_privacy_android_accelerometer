@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/borderblack"
+        android:gravity="top">
+
+        <ImageView
+            android:id="@+id/dropdown_menu"
+            android:layout_width="66dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="330dp"
+            android:layout_marginEnd="21dp"
+            android:onClick="test"
+            android:src="@drawable/menu" />
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="160dp"
+            android:layout_marginBottom="0dp"
+            android:src="@drawable/logo" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="413dp"
+        android:layout_height="92dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+
+        <ImageView
+            android:id="@+id/controlloAccellerometro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="test"
+            android:src="@drawable/eyeopen">
+
+        </ImageView>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="411dp"
+        android:layout_height="54dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/centerLayout"
+        app:layout_constraintVertical_bias="0.454">
+
+        <ImageView
+            android:id="@+id/mic"
+            android:layout_width="74dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/mic"></ImageView>
+
+        <ImageView
+            android:id="@+id/stopbutton"
+            android:layout_width="74dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="320dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/stopbutton"></ImageView>
+
+        <ImageView
+            android:id="@+id/playbutton"
+            android:layout_width="79dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="165dp"
+            app:srcCompat="@drawable/playbutton" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/centerLayout"
+        android:layout_width="389dp"
+        android:layout_height="339dp"
+        android:layout_marginTop="173dp"
+        android:layout_marginBottom="190dp"
+        android:background="@drawable/blackcircle"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.757"
+        tools:layout_editor_absoluteX="14dp">
+
+        <Button
+            android:id="@+id/buttonRecognize"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="140dp"
+            android:layout_marginTop="250dp"
+            android:gravity="center"
+            android:onClick="go"
+            android:text="recognize"></Button>
+
+        <ImageView
+            android:layout_width="246dp"
+            android:layout_height="135dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="67dp"
+            android:layout_marginTop="97dp"
+            android:layout_marginEnd="76dp"
+            android:layout_marginBottom="107dp"
+            android:src="@drawable/soundwaves"
+            android:id="@+id/soundWaves"/>
+
+        <TextView
+            android:id="@+id/traccia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="135dp"
+            android:layout_marginTop="35dp"
+            android:gravity="center"
+            android:text="Test123"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tracciaSotto"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/traccia"
+            android:layout_marginLeft="135dp"
+            android:gravity="center"
+            android:text="123" />
+
+        <ImageView
+            android:id="@+id/skipLeft"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="-5dp"
+            android:layout_marginTop="140dp"
+            android:src="@drawable/skipbuttonleft" />
+
+        <ImageView
+            android:id="@+id/skipRight"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="140dp"
+            android:layout_marginEnd="18dp"
+            android:src="@drawable/skipbuttonright" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="416dp"
+        android:layout_height="101dp"
+        android:background="@color/black"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/borderred"
+            android:text="test"
+            android:textColor="@color/white"
+            android:textSize="30dp">
+
+        </TextView>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
