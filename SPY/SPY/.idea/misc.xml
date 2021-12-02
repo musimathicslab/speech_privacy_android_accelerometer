@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/drawable/ic_baseline_mic_24.xml" value="0.30052083333333335" />
+        <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.3078125" />
+        <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/drawable/play_pressed.xml" value="0.16197916666666667" />
         <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/font/aldrich.xml" value="0.2777777777777778" />
         <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/rapag/Documents/GitHub/speech_privacy_android_accelerometer/SPY/SPY/app/src/main/res/layout/auoto_play_layout.xml" value="0.33" />

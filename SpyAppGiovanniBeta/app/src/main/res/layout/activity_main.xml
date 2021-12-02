@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="330dp"
-            android:layout_marginEnd="21dp"
+            android:layout_marginEnd="7dp"
             android:onClick="test"
             android:src="@drawable/menu" />
 
@@ -48,7 +48,7 @@
             android:id="@+id/controlloAccellerometro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="test"
+            android:onClick="controlAccelerometro"
             android:src="@drawable/eyeopen">
 
         </ImageView>
@@ -70,6 +70,7 @@
             android:id="@+id/mic"
             android:layout_width="74dp"
             android:layout_height="match_parent"
+            android:onClick="registra"
             android:src="@drawable/mic"></ImageView>
 
         <ImageView
@@ -79,6 +80,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="320dp"
             android:layout_marginEnd="6dp"
+            android:onClick="stopRegistrazione"
             android:src="@drawable/stopbutton"></ImageView>
 
         <ImageView
@@ -86,6 +88,7 @@
             android:layout_width="79dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="165dp"
+            android:onClick="riproduci"
             app:srcCompat="@drawable/playbutton" />
 
     </RelativeLayout>
@@ -114,6 +117,7 @@
             android:text="recognize"></Button>
 
         <ImageView
+            android:id="@+id/soundWaves"
             android:layout_width="246dp"
             android:layout_height="135dp"
             android:layout_alignParentStart="true"
@@ -124,8 +128,7 @@
             android:layout_marginTop="97dp"
             android:layout_marginEnd="76dp"
             android:layout_marginBottom="107dp"
-            android:src="@drawable/soundwaves"
-            android:id="@+id/soundWaves"/>
+            android:src="@drawable/soundwaves" />
 
         <TextView
             android:id="@+id/traccia"
