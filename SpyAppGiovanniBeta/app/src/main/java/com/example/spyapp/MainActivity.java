@@ -3,6 +3,7 @@ package com.example.spyapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,10 +13,13 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -24,6 +28,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //Accellerometro
     private SensorManager sensorManager;
     Sensor accelerometer;
+    boolean accellerometerFlag;
+    ImageView eyeAccellerometer;
+    /*long t;
+    int cont = 0;*/
+
+    //storage
+   /* FileOutputStream stream;
+    SharedPreferences preferences;*/
 
     //Gestione audio
     MediaRecorder recorder;
@@ -36,34 +48,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     TextView nomeTraccia;
     TextView dataTraccia;
 
+    //console
+    TextView console;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        accellerometerFlag = true;
+
+        eyeAccellerometer = (ImageView) findViewById(R.id.controlloAccellerometro);
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
 
         //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
         createdTime = new Date();
         fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
 
-        System.out.println(fileName);
-        System.out.println(createdTime);
-
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
 
+        console = (TextView) findViewById(R.id.textBoxConsole);
 
+    }
+
+    //Accelerometro si ferma quando l'app è in background per evitare consumi inutili di batteria
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-       /* if (flag) {
+      /* if (accellerometerFlag) {
             t = event.timestamp;
-            flag = false;
+            accellerometerFlag = false;
         }
 
         cont++;
@@ -80,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             stream.write(scrivi.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    */
+        }*/
     }
 
     @Override //non ci serve
@@ -108,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         createdTime = new Date();
         fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
-        counterFileName++;
         recorder.setOutputFile(fileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         recorder.setAudioEncodingBitRate(16*44100);
@@ -119,6 +147,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             e.printStackTrace();
         }
         recorder.start();
+
+       /* if(accellerometerFlag){
+            try{
+                stream = openFileOutput("dataRegistrazione" + counterFileName + ".csv", Context.MODE_PRIVATE);
+                String scrivi = "TIME," + "X," + "Y," + "Z\n";
+                stream.write(scrivi.getBytes());
+                store();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if(!accellerometerFlag){
+
+        }*/
+
+        counterFileName++;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -135,6 +179,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         dataTraccia.setText(dataAttuale);
         recorder.release();
         recorder = null;
+        //stream.close();
     }
 
+    public void controlAccelerometro(View view) {
+        if(accellerometerFlag){
+            Toast.makeText(this, "Accellerometer: OFF", Toast.LENGTH_SHORT).show();
+            console.setText("Accellerometer: OFF");
+            eyeAccellerometer.setImageResource(R.drawable.eyeclosed);
+            sensorManager.unregisterListener(this);
+            accellerometerFlag = false;
+        } else if(!accellerometerFlag){
+            Toast.makeText(this, "Accellerometer: ON", Toast.LENGTH_SHORT).show();
+            console.setText("Accellerometer: ON");
+            eyeAccellerometer.setImageResource(R.drawable.eyeopen);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            accellerometerFlag = true;
+        }
+    }
+
+    /*private void store(){
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putInt("counter", counterFileName);
+        edit.commit();
+    }*/
 }
