@@ -26,17 +26,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Sensor accelerometer;
 
     //Gestione audio
-    MediaRecorder recorder = null;
-    private MediaPlayer player = null;
-    private MediaPlayer player2 = null;
-    String fileName = null;
+    MediaRecorder recorder;
+    private MediaPlayer player;
+    String fileName;
     int counterFileName = 0;
 
     //Salvataggio audio
-    Date createdTime = new Date();
-
-    TextView nomeTraccia = null;
-    TextView dataTraccia = null;
+    Date createdTime;
+    TextView nomeTraccia;
+    TextView dataTraccia;
 
 
     @Override
@@ -48,9 +46,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        fileName =  getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova registrazione #" + counterFileName + File.separator + createdTime + File.separator + "audiorecordtest.3gp";
+        //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
+        createdTime = new Date();
+        fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
 
         System.out.println(fileName);
+        System.out.println(createdTime);
 
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
@@ -88,22 +89,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void riproduci(View v) {
-        player2 = new MediaPlayer();
+        player = new MediaPlayer();
         try {
-            player2.setDataSource(fileName);
-            player2.prepare();
-            player2.start();
+            player.setDataSource(fileName);
+            player.prepare();
+            player.start();
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void registra(View v) {
-        Toast.makeText(this, "Start recording", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Start recording", Toast.LENGTH_SHORT).show();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        createdTime = new Date();
+        fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
         counterFileName++;
         recorder.setOutputFile(fileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
@@ -112,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         try {
             recorder.prepare();
         } catch (IOException e) {
+            e.printStackTrace();
         }
-
         recorder.start();
     }
 
@@ -122,20 +126,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, "Stopped reg", Toast.LENGTH_SHORT).show();
         recorder.stop();
 
-        String fileNameAttuale = null;
-        String dataAttuale = null;
-        if(counterFileName < 9 && counterFileName > 0) {
-            fileNameAttuale = fileName.substring(57, 80);
-            dataAttuale = fileName.substring(82, 91) + " " + fileName.substring(112, 115);
-        } else if(counterFileName > 9 && counterFileName < 999) {
-            fileNameAttuale = fileName.substring(57, 81);
-            dataAttuale = fileName.substring(83, 92) + " " + fileName.substring(113, 116);
-        } else if(counterFileName < 0)
-            throw new Exception("Negative number error!");
-        else {
-            fileNameAttuale = fileName.substring(57, 82);
-            dataAttuale = fileName.substring(84, 93) + " " + fileName.substring(114, 117);
-        }
+        String fileNameAttuale, dataAttuale;
+
+        fileNameAttuale = fileName.substring(58, 80);
+        dataAttuale = fileName.substring(81, 105);
 
         nomeTraccia.setText(fileNameAttuale);
         dataTraccia.setText(dataAttuale);
