@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //console
     TextView console;
 
+    //View centrale
+    ImageView centrale;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
 
+        centrale = (ImageView) findViewById(R.id.soundWaves);
+
         console = (TextView) findViewById(R.id.textBoxConsole);
 
         if(counterFileName > 0){
@@ -97,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             nomeTraccia.setText("Nessuna traccia audio");
             dataTraccia.setText(" ");
+            centrale.setImageResource(R.drawable.privacy);
+            centrale.setMaxHeight(99);
+            centrale.setMaxWidth(231);
         }
     }
 
@@ -190,6 +198,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 fileNames.add(file);
 
             counterFileName = directory.listFiles().length;
+
+            if(centrale.getDrawable().equals(R.drawable.privacy)){
+                centrale.setImageResource(R.drawable.soundwaves);
+                centrale.setMaxHeight(99);
+                centrale.setMaxWidth(231);
+            }
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No recording in progress!", Toast.LENGTH_SHORT).show();
@@ -207,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(this, "Accellerometer: ON", Toast.LENGTH_SHORT).show();
             console.setText("Accellerometer: ON");
             eyeAccellerometer.setImageResource(R.drawable.eyeopen);
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             accellerometerFlag = true;
         }
     }
