@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //View centrale
     ImageView centrale;
+    boolean wave;
 
 
     @Override
@@ -82,13 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         createdTime = new Date();
 
         //fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
-        fileNames = new ArrayList<File>();
-        directory = getExternalCacheDir();
-
-        for(File file : directory.listFiles())
-            fileNames.add(file);
-
-        counterFileName = directory.listFiles().length;
+        refresh();
 
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
@@ -105,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             centrale.setImageResource(R.drawable.privacy);
             centrale.setMaxHeight(99);
             centrale.setMaxWidth(231);
+            wave = false;
         }
     }
 
@@ -191,19 +187,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             recorder.release();
             recorder = null;
 
-            fileNames = new ArrayList<File>();
-            directory = getExternalCacheDir();
+            refresh();
 
-            for (File file : directory.listFiles())
-                fileNames.add(file);
-
-            counterFileName = directory.listFiles().length;
-
-            if(centrale.getDrawable().equals(R.drawable.privacy)){
+            if(!wave){
                 centrale.setImageResource(R.drawable.soundwaves);
                 centrale.setMaxHeight(99);
                 centrale.setMaxWidth(231);
             }
+
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No recording in progress!", Toast.LENGTH_SHORT).show();
@@ -242,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             setRegistrazione(fileNames.get(counterFileName - adj).toString());
             fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
             System.out.println(fileName);
+            System.out.println(counterFileName - adj);
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
@@ -255,10 +247,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             setRegistrazione(fileNames.get(counterFileName - adj).toString());
             fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
             System.out.println(fileName);
+            System.out.println(counterFileName - adj);
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
             adj--;
         }
+    }
+
+    public void delete(View view) {
+        //da fixare
+
+        try{
+            fileNames.get(counterFileName - 1).delete();
+            refresh();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            nomeTraccia.setText("Nessuna traccia audio");
+            dataTraccia.setText(" ");
+            centrale.setImageResource(R.drawable.privacy);
+            centrale.setMaxHeight(99);
+            centrale.setMaxWidth(231);
+            Toast.makeText(this, "No more recording left", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void refresh(){
+        fileNames = new ArrayList<File>();
+        directory = getExternalCacheDir();
+
+        for (File file : directory.listFiles())
+            fileNames.add(file);
+
+        counterFileName = directory.listFiles().length;
     }
 }

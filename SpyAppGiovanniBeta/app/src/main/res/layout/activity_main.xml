@@ -87,9 +87,17 @@
             android:id="@+id/playbutton"
             android:layout_width="79dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="165dp"
+            android:layout_marginLeft="110dp"
             android:onClick="riproduci"
             app:srcCompat="@drawable/playbutton" />
+
+        <ImageView
+            android:id="@+id/trashButton"
+            android:layout_width="79dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="225dp"
+            android:onClick="delete"
+            android:src="@drawable/trash"/>
 
     </RelativeLayout>
 
