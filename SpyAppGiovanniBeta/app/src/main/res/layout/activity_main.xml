@@ -132,8 +132,8 @@
 
         <TextView
             android:id="@+id/traccia"
-            android:layout_width="113dp"
-            android:layout_height="59dp"
+            android:layout_width="121dp"
+            android:layout_height="61dp"
             android:layout_marginLeft="135dp"
             android:layout_marginTop="35dp"
             android:gravity="center"
@@ -142,7 +142,7 @@
 
         <TextView
             android:id="@+id/tracciaSotto"
-            android:layout_width="110dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/traccia"
             android:layout_marginLeft="135dp"
@@ -156,6 +156,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="-5dp"
             android:layout_marginTop="140dp"
+            android:onClick="skipLeft"
             android:src="@drawable/skipbuttonleft" />
 
         <ImageView
@@ -166,6 +167,7 @@
             android:layout_marginLeft="300dp"
             android:layout_marginTop="140dp"
             android:layout_marginEnd="18dp"
+            android:onClick="skipRight"
             android:src="@drawable/skipbuttonright" />
 
 

@@ -2,12 +2,15 @@ package com.example.spyapp;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -21,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -34,14 +39,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     int cont = 0;*/
 
     //storage
-   /* FileOutputStream stream;
-    SharedPreferences preferences;*/
+    File directory;
 
     //Gestione audio
     MediaRecorder recorder;
     private MediaPlayer player;
     String fileName;
-    int counterFileName = 0;
+    ArrayList<File> fileNames;
+    int counterFileName;
+    int adj = 1;
 
     //Salvataggio audio
     Date createdTime;
@@ -67,13 +73,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
         createdTime = new Date();
-        fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
+
+        //fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
+        fileNames = new ArrayList<File>();
+        directory = getExternalCacheDir();
+
+        for(File file : directory.listFiles())
+            fileNames.add(file);
+
+        counterFileName = directory.listFiles().length;
 
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
 
         console = (TextView) findViewById(R.id.textBoxConsole);
 
+        if(counterFileName > 0){
+            setRegistrazione(fileNames.get(counterFileName - adj).toString());
+        } else {
+            nomeTraccia.setText("Nessuna traccia audio");
+            dataTraccia.setText(" ");
+        }
     }
 
     //Accelerometro si ferma quando l'app è in background per evitare consumi inutili di batteria
@@ -126,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -162,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }*/
 
-        counterFileName++;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -170,16 +188,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, "Stopped reg", Toast.LENGTH_SHORT).show();
         recorder.stop();
 
-        String fileNameAttuale, dataAttuale;
+        setRegistrazione(fileName);
 
-        fileNameAttuale = fileName.substring(58, 80);
-        dataAttuale = fileName.substring(81, 105);
-
-        nomeTraccia.setText(fileNameAttuale);
-        dataTraccia.setText(dataAttuale);
         recorder.release();
         recorder = null;
-        //stream.close();
+
+        fileNames = new ArrayList<File>();
+        directory = getExternalCacheDir();
+
+        for(File file : directory.listFiles())
+            fileNames.add(file);
+
+        counterFileName = directory.listFiles().length;
     }
 
     public void controlAccelerometro(View view) {
@@ -198,9 +218,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    /*private void store(){
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putInt("counter", counterFileName);
-        edit.commit();
-    }*/
+    public void setRegistrazione(String fileName){
+        String fileNameAttuale, dataAttuale;
+
+        fileNameAttuale = fileName.substring(58, 80);
+        dataAttuale = fileName.substring(81, 105);
+
+        nomeTraccia.setText(fileNameAttuale);
+        dataTraccia.setText(dataAttuale);
+    }
+
+    public void skipRight(View view) {
+        try {
+            adj--;
+            setRegistrazione(fileNames.get(counterFileName - adj).toString());
+            fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
+        } catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void skipLeft(View view) {
+        try {
+            adj++;
+            setRegistrazione(fileNames.get(counterFileName - adj).toString());
+            fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
+        } catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
