@@ -13,6 +13,7 @@ import android.hardware.SensorManager;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,11 +46,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //Gestione audio
     MediaRecorder recorder;
-    private MediaPlayer player;
+    MediaPlayer player;
     String fileName;
     ArrayList<File> fileNames;
     int counterFileName;
     int adj = 1;
+    FileDescriptor input;
 
     //Salvataggio audio
     Date createdTime;
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
         createdTime = new Date();
 
-        //fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
+        fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
         fileNames = new ArrayList<File>();
         directory = getExternalCacheDir();
 
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             nomeTraccia.setText("Nessuna traccia audio");
             dataTraccia.setText(" ");
+
         }
     }
 
@@ -139,11 +144,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void riproduci(View v) {
         player = new MediaPlayer();
-        try {
-            player.setDataSource(fileName);
+        try{
+            player.setDataSource(this, Uri.parse(fileName));
             player.prepare();
             player.start();
-        } catch (IOException e) {
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, "Start recording", Toast.LENGTH_SHORT).show();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         createdTime = new Date();
         fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
         recorder.setOutputFile(fileName);
@@ -185,21 +190,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void stopRegistrazione(View v) throws Exception {
-        Toast.makeText(this, "Stopped reg", Toast.LENGTH_SHORT).show();
-        recorder.stop();
+        try {
+            recorder.stop();
+            Toast.makeText(this, "Stopped reg", Toast.LENGTH_SHORT).show();
 
-        setRegistrazione(fileName);
+            setRegistrazione(fileName);
 
-        recorder.release();
-        recorder = null;
+            recorder.release();
+            recorder = null;
 
-        fileNames = new ArrayList<File>();
-        directory = getExternalCacheDir();
+            fileNames = new ArrayList<File>();
+            directory = getExternalCacheDir();
 
-        for(File file : directory.listFiles())
-            fileNames.add(file);
+            for (File file : directory.listFiles())
+                fileNames.add(file);
 
-        counterFileName = directory.listFiles().length;
+            counterFileName = directory.listFiles().length;
+        } catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "No recording in progress!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void controlAccelerometro(View view) {
@@ -233,9 +243,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             adj--;
             setRegistrazione(fileNames.get(counterFileName - adj).toString());
             fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
+            System.out.println(fileName);
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
+            adj++;
         }
     }
 
@@ -244,9 +256,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             adj++;
             setRegistrazione(fileNames.get(counterFileName - adj).toString());
             fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
+            System.out.println(fileName);
         } catch(Exception e){
             e.printStackTrace();
             Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
+            adj--;
         }
     }
 }
