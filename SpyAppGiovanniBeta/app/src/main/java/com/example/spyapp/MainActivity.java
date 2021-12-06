@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
         createdTime = new Date();
 
-        fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
+        //fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova Registrazione #" + counterFileName + " " + createdTime.toString().substring(0, 10) + " " + createdTime.toString().substring(30, 34) + createdTime.toString().substring(10, 19) + ".3gp";
         fileNames = new ArrayList<File>();
         directory = getExternalCacheDir();
 
@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             nomeTraccia.setText("Nessuna traccia audio");
             dataTraccia.setText(" ");
-
         }
     }
 
@@ -144,11 +143,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void riproduci(View v) {
         player = new MediaPlayer();
-        try{
+        try {
             player.setDataSource(this, Uri.parse(fileName));
             player.prepare();
             player.start();
-        } catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -171,21 +170,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             e.printStackTrace();
         }
         recorder.start();
-
-       /* if(accellerometerFlag){
-            try{
-                stream = openFileOutput("dataRegistrazione" + counterFileName + ".csv", Context.MODE_PRIVATE);
-                String scrivi = "TIME," + "X," + "Y," + "Z\n";
-                stream.write(scrivi.getBytes());
-                store();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if(!accellerometerFlag){
-
-        }*/
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
