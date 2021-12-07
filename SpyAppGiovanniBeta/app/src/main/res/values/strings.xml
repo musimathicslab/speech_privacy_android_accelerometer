@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SpyApp</string>
+    <string-array name="spinnerArray">
+        <item>Switch to pre-registered audio</item>
+        <item>Set ip and port for remote</item>
+    </string-array>
 </resources>
