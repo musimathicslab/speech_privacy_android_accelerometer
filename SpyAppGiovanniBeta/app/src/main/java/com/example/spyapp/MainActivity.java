@@ -269,7 +269,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             createdTime = new Date();
             fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova_Registrazione_#" + counterFileName + "_" + createdTime.toString().substring(0, 3) + "_" + createdTime.toString().substring(4, 7) + "_" + createdTime.toString().substring(8, 10) + "_" + createdTime.toString().substring(30, 34) + "_" + createdTime.toString().substring(11, 13) + "x" + createdTime.toString().substring(14, 16) + "x" + createdTime.toString().substring(17, 19) + ".3gp";
-            System.out.println(fileName);
             recorder.setOutputFile(fileName);
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.setAudioEncodingBitRate(16 * 44100);
@@ -370,8 +369,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 adj--;
                 setRegistrazione(fileNames.get(counterFileName - adj).toString(), counterFileName);
                 fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
-                System.out.println(fileName);
-                System.out.println(counterFileName - adj);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
@@ -397,8 +394,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 adj++;
                 setRegistrazione(fileNames.get(counterFileName - adj).toString(), counterFileName);
                 fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
-                System.out.println(fileName);
-                System.out.println(counterFileName - adj);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
@@ -422,17 +417,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //da rivedere
         if(!precaricato) {
             try {
+                if(fileNames.size() == 0){
+                    nomeTraccia.setText("Nessuna traccia audio");
+                    dataTraccia.setText(" ");
+                    centrale.setImageResource(R.drawable.privacy);
+                    centrale.setMaxHeight(99);
+                    centrale.setMaxWidth(231);
+                    Toast.makeText(this, "No more recording left", Toast.LENGTH_SHORT).show();
+                }
+
                 fileNames.get(counterFileName - adj).delete();
-                skipLeft(null);
+                System.out.println(counterFileName - adj);
+                System.out.println(fileNames.get(counterFileName - adj).toString());
+                System.out.println(fileNames.size());
                 refresh();
+                setRegistrazione(fileNames.get(counterFileName - adj).toString(), fileNames.size());
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
-                nomeTraccia.setText("Nessuna traccia audio");
-                dataTraccia.setText(" ");
-                centrale.setImageResource(R.drawable.privacy);
-                centrale.setMaxHeight(99);
-                centrale.setMaxWidth(231);
-                Toast.makeText(this, "No more recording left", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(this, "Non puoi cancellare le registrazioni preregistrate!", Toast.LENGTH_SHORT).show();
