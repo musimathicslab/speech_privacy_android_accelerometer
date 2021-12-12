@@ -3,18 +3,22 @@ package com.example.spyapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,9 +50,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     Sensor accelerometer;
     boolean accellerometerFlag;
+    boolean accellerometerFlagSeconds = true;
     ImageView eyeAccellerometer;
-    /*long t;
-    int cont = 0;*/
+    long t;
+    int cont = 0;
+    int personalCounter = 0;
+    FileOutputStream stream;
 
     //storage
     File directory;
@@ -63,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     int counterFileName;
     int adj = 1;
     FileDescriptor input;
+    AudioManager audioChecker;
 
     //Salvataggio audio
     Date createdTime;
@@ -152,10 +160,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button setButton;
     String ip, port;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
+
+        refresh();
+
+        audioChecker = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         preferences = getSharedPreferences("generalSettings", Context.MODE_PRIVATE);
         editor = preferences.edit();
@@ -176,8 +191,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //istanzia di nuovo per ottenere la data attuale e differenziarla nel TextView
         createdTime = new Date();
 
-        refresh();
-
         nomeTraccia = (TextView) findViewById(R.id.traccia);
         dataTraccia = (TextView) findViewById(R.id.tracciaSotto);
 
@@ -187,7 +200,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(!precaricato) {
             if (counterFileName > 0) {
-                setRegistrazione(fileNames.get(counterFileName - adj).toString(), counterFileName);
+                fileName = fileNames.get(counterFileName - adj).toString();
+                setRegistrazione(fileName, counterFileName);
             } else {
                 nomeTraccia.setText("Nessuna traccia audio");
                 dataTraccia.setText(" ");
@@ -198,6 +212,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         } else {
             setRegistrazione(null, 0);
+        }
+
+        try {
+            stream = openFileOutput("data" + (counterFileName - adj) + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -214,30 +234,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-      /* if (accellerometerFlag) {
-            t = event.timestamp;
-            accellerometerFlag = false;
-        }
-
-        cont++;
-        float[] linear_acceleration = new float[3];
-        float tempo2 = (event.timestamp - t) / 1000000000f;
-
-
-        linear_acceleration[0] = event.values[0];
-        linear_acceleration[1] = event.values[1];
-        linear_acceleration[2] = event.values[2];
-
-        String scrivi = "" + tempo2 + "," + linear_acceleration[0] + "," + linear_acceleration[1] + "," + linear_acceleration[2] + "\n";
-        try {
-            stream.write(scrivi.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
-
     @Override //non ci serve
     public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
@@ -246,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(!precaricato) {
             player = new MediaPlayer();
             try {
-                player.setDataSource(this, Uri.parse(fileName));
+                player.setDataSource(fileName);
                 player.prepare();
                 player.start();
             } catch (Exception e) {
@@ -257,6 +253,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(!player.isPlaying()) {
                 player.start();
             }
+        }
+        new TaskBackground().execute(0);
+        personalCounter++;
+        try {
+            stream.close();
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -367,7 +370,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(!precaricato) {
             try {
                 adj--;
-                setRegistrazione(fileNames.get(counterFileName - adj).toString(), counterFileName);
+                fileName = fileNames.get(counterFileName - adj).toString();
+                setRegistrazione(fileName, counterFileName);
                 fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -392,7 +396,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(!precaricato) {
             try {
                 adj++;
-                setRegistrazione(fileNames.get(counterFileName - adj).toString(), counterFileName);
+                fileName = fileNames.get(counterFileName - adj).toString();
+                setRegistrazione(fileName, counterFileName);
                 fileName = fileNames.get(counterFileName - adj).getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -405,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 setRegistrazione(null, 0);
                 editor.putInt("pos", posizione);
                 editor.commit();
-            } catch(Exception e){
+            } catch(Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "No more audio files", Toast.LENGTH_SHORT).show();
                 posizione++;
@@ -414,7 +419,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void delete(View view) {
-        //da rivedere
         if(!precaricato) {
             try {
                 if(fileNames.size() == 0){
@@ -509,13 +513,51 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 editor.putString("IP", ip);
                 editor.putString("PORT", port);
                 editor.commit();
-
-                view.setEnabled(false);
-                view.setVisibility(View.GONE);
-
-                //piccolo bug visivo
             }
         });
+    }
+
+    class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
+
+        @Override
+        protected Integer doInBackground(Integer... integers) {
+            while(accellerometerFlag) {
+                 if(audioChecker.isMusicActive()) {
+                     accellerometerFlagSeconds = true;
+                     try {
+                         stream = openFileOutput("data" + (counterFileName - adj) + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+                         String scrivi = "TIME," + "X," + "Y," + "Z\n";
+                         stream.write(scrivi.getBytes());
+                     } catch (Exception e) {
+                         e.printStackTrace();
+                     }
+                 }
+            }
+            return 0;
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (accellerometerFlagSeconds) {
+            t = event.timestamp;
+            accellerometerFlagSeconds = false;
+        }
+
+        cont++;
+        float[] linear_acceleration = new float[3];
+        float tempo2 = (event.timestamp - t) / 1000000000f;
+
+        linear_acceleration[0] = event.values[0];
+        linear_acceleration[1] = event.values[1];
+        linear_acceleration[2] = event.values[2];
+
+        String scrivi = "" + tempo2 + "," + linear_acceleration[0] + "," + linear_acceleration[1] + "," + linear_acceleration[2] + "\n";
+        try {
+            stream.write(scrivi.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
