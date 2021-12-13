@@ -198,6 +198,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         console = (TextView) findViewById(R.id.textBoxConsole);
 
+        try {
+            stream = openFileOutput("data" + (counterFileName - adj) + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         if(!precaricato) {
             if (counterFileName > 0) {
                 fileName = fileNames.get(counterFileName - adj).toString();
@@ -249,7 +255,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
-        //personalCounter++;
+        new TaskBackground().execute(0);
+        personalCounter++;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -506,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
     }
 
-    /*class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
+    class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
 
         @Override
         protected Integer doInBackground(Integer... integers) {
@@ -517,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                          stream = openFileOutput("data" + (counterFileName - adj) + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
                          String scrivi = "TIME," + "X," + "Y," + "Z\n";
                          stream.write(scrivi.getBytes());
-                         stream.close();
                      } catch (Exception e) {
                          e.printStackTrace();
                      }
@@ -525,11 +531,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
             return 0;
         }
-    }*/
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        /*if (accellerometerFlagSeconds) {
+        if (accellerometerFlagSeconds) {
             t = event.timestamp;
             accellerometerFlagSeconds = false;
         }
@@ -547,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             stream.write(scrivi.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }
 
