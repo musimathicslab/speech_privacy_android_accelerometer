@@ -113,7 +113,7 @@
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="140dp"
-            android:layout_marginTop="250dp"
+            android:layout_marginTop="235dp"
             android:gravity="center"
             android:onClick="go"
             android:text="recognize"></Button>
