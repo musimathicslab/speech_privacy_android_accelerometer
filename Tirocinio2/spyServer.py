@@ -1,6 +1,5 @@
 import csv
 import random
-
 import flask
 import EvolutiveAlgoritm
 from multiprocessing import Pool

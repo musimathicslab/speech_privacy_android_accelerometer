@@ -248,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 for(File f : selectedCSV){
                     if(f.getAbsolutePath().contains(spinnerCentrale.getSelectedItem().toString())){
                         currentFile = f;
+                        console.setText("File selezionato: " + spinnerCentrale.getSelectedItem().toString());
                     }
                 }
             }
@@ -262,11 +263,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             path = getDataDir().toString() + "/files";
         }
         file = new File(path);
-        for(File f : file.listFiles()){
-            if(f.getAbsolutePath().contains(nomeTraccia.getText())){
-                selectedCSV.add(f);
-                selectedCSVVisual.add(f.getAbsolutePath().substring(38));
-                CSVadapter.notifyDataSetChanged();
+        for(File f : file.listFiles()) {
+            if (!precaricato) {
+                if (f.getAbsolutePath().contains(nomeTraccia.getText())) {
+                    selectedCSV.add(f);
+                    selectedCSVVisual.add(f.getAbsolutePath().substring(38));
+                    CSVadapter.notifyDataSetChanged();
+                }
+            } else {
+                if (f.getAbsolutePath().contains(nomeTraccia.getText() + (String) dataTraccia.getText())) {
+                    selectedCSV.add(f);
+                    selectedCSVVisual.add(f.getAbsolutePath().substring(38));
+                    CSVadapter.notifyDataSetChanged();
+                }
             }
         }
     }
@@ -309,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
-        if(accellerometerFlag) refreshCSV();
+        refreshCSV();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -520,10 +529,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                         precaricato = true;
                                         item.setTitle("Switch to recording audio");
                                         setRegistrazione(null, 0);
+                                        refreshCSV();
                                    } else if(item.getTitle().toString().equals("Switch to recording audio")) {
                                        precaricato = false;
                                        item.setTitle("Switch to registered audio");
                                        setRegistrazione(fileName, counterFileName);
+                                       refreshCSV();
                                    } break;
         }
         return false;
@@ -589,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void go(View view) {
-        //
+        //da fare
     }
 
     class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
@@ -603,7 +614,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     flag = true;
                     flagStart = true;
                     try {
-                        stream = openFileOutput( nomeTraccia.getText() + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+                        if(!precaricato) {
+                            stream = openFileOutput(nomeTraccia.getText() + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+                        } else {
+                            stream = openFileOutput(nomeTraccia.getText() + (String) dataTraccia.getText() + "_" + personalCounter + ".csv", Context.MODE_PRIVATE);
+                        }
                         personalCounter++;
                         editor.putInt("personalCounter", personalCounter);
                         editor.commit();
