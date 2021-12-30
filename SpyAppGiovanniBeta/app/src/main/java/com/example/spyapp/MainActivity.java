@@ -27,10 +27,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -161,6 +164,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button setButton;
     String ip, port;
 
+    //ArrayList per spinner
+    Spinner spinnerCentrale;
+    ArrayList<File> selectedCSV;
+    ArrayList<String> selectedCSVVisual;
+    ArrayAdapter<String> CSVadapter;
+    String path;
+    File file;
+    File currentFile;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
 
         refresh();
+
+        spinnerCentrale = (Spinner) findViewById(R.id.spinnerCSV);
 
         audioChecker = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -216,6 +230,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             setRegistrazione(null, 0);
         }
+
+        refreshCSV();
+    }
+
+    public void refreshCSV(){
+        selectedCSV = new ArrayList<File>();
+        selectedCSVVisual = new ArrayList<String>();
+        CSVadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, selectedCSVVisual);
+
+        spinnerCentrale.setAdapter(CSVadapter);
+        spinnerCentrale.setVisibility(View.VISIBLE);
+
+        spinnerCentrale.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                for(File f : selectedCSV){
+                    if(f.getAbsolutePath().contains(spinnerCentrale.getSelectedItem().toString())){
+                        currentFile = f;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //niente
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            path = getDataDir().toString() + "/files";
+        }
+        file = new File(path);
+        for(File f : file.listFiles()){
+            if(f.getAbsolutePath().contains(nomeTraccia.getText())){
+                selectedCSV.add(f);
+                selectedCSVVisual.add(f.getAbsolutePath().substring(38));
+                CSVadapter.notifyDataSetChanged();
+            }
+        }
     }
 
     //Accelerometro si ferma quando l'app è in background per evitare consumi inutili di batteria
@@ -255,6 +308,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 player.start();
             }
         }
+
+        if(accellerometerFlag) refreshCSV();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -313,13 +368,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void controlAccelerometro(View view) {
         if(accellerometerFlag){
             Toast.makeText(this, "Accellerometer: OFF", Toast.LENGTH_SHORT).show();
-            console.setText("Accellerometer: OFF");
             eyeAccellerometer.setImageResource(R.drawable.eyeclosed);
             sensorManager.unregisterListener(this);
             accellerometerFlag = false;
         } else if(!accellerometerFlag){
             Toast.makeText(this, "Accellerometer: ON", Toast.LENGTH_SHORT).show();
-            console.setText("Accellerometer: ON");
             eyeAccellerometer.setImageResource(R.drawable.eyeopen);
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             accellerometerFlag = true;
@@ -384,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 posizione--;
             }
         }
+        refreshCSV();
     }
 
     public void skipLeft(View view) {
@@ -410,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 posizione++;
             }
         }
+        refreshCSV();
     }
 
     public void delete(View view) {
@@ -449,7 +504,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             counterFileName = directory.listFiles().length;
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -534,6 +588,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public void go(View view) {
+        //
+    }
+
     class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
 
         @Override
@@ -551,13 +609,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         editor.commit();
                         String scrivi = "TIME," + "X," + "Y," + "Z\n";
                         stream.write(scrivi.getBytes());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                if (!audioChecker.isMusicActive() && flagStart) {
+                } else if (!audioChecker.isMusicActive() && flagStart) {
                     flagStart = false;
                     try {
                         stream.close();

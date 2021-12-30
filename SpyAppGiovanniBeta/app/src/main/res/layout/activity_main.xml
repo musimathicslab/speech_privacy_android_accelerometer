@@ -118,6 +118,17 @@
             android:onClick="go"
             android:text="recognize"></Button>
 
+        <Spinner
+            android:id="@+id/spinnerCSV"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonRecognize"
+            android:layout_marginLeft="140dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="22dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+
         <ImageView
             android:id="@+id/soundWaves"
             android:layout_width="231dp"
