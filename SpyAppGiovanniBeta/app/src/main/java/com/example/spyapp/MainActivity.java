@@ -1,10 +1,6 @@
 package com.example.spyapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,10 +10,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,22 +25,28 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -263,18 +263,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             path = getDataDir().toString() + "/files";
         }
         file = new File(path);
-        for(File f : file.listFiles()) {
-            if (!precaricato) {
-                if (f.getAbsolutePath().contains(nomeTraccia.getText())) {
-                    selectedCSV.add(f);
-                    selectedCSVVisual.add(f.getAbsolutePath().substring(38));
-                    CSVadapter.notifyDataSetChanged();
-                }
-            } else {
-                if (f.getAbsolutePath().contains(nomeTraccia.getText() + (String) dataTraccia.getText())) {
-                    selectedCSV.add(f);
-                    selectedCSVVisual.add(f.getAbsolutePath().substring(38));
-                    CSVadapter.notifyDataSetChanged();
+        if(file.length() > 0) {
+            for (File f : file.listFiles()) {
+                if (!precaricato) {
+                    if (f.getAbsolutePath().contains(nomeTraccia.getText())) {
+                        selectedCSV.add(f);
+                        selectedCSVVisual.add(f.getAbsolutePath().substring(38));
+                        CSVadapter.notifyDataSetChanged();
+                    }
+                } else {
+                    if (f.getAbsolutePath().contains(nomeTraccia.getText() + (String) dataTraccia.getText())) {
+                        selectedCSV.add(f);
+                        selectedCSVVisual.add(f.getAbsolutePath().substring(38));
+                        CSVadapter.notifyDataSetChanged();
+                    }
                 }
             }
         }
@@ -317,8 +319,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 player.start();
             }
         }
-
-        refreshCSV();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -599,8 +599,67 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public void go(View view) {
-        //da fare
+    public void send(View view) {
+        try {
+            String postUrl = "http://" + ip + ":" + port + "/";
+            RequestBody postBodyImage = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", currentFile.getAbsolutePath(), RequestBody.create(MediaType.parse("text/csv"), file))
+                    .build();
+            postRequest(postUrl, postBodyImage);
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Inserire correttamente IP e Porta!", Toast.LENGTH_SHORT).show();
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Inserire correttamente IP e Porta!", Toast.LENGTH_SHORT).show();
+        } catch(Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Seleziona prima un file valido!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void postRequest(String postUrl, RequestBody postBody) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postUrl)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        console.setText("Failed to Connect to Server ->"+ postUrl);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String r = response.body().string();
+                            r = r.substring(1, r.length()-1);
+                            console.setText("File SALVATO IN MEMORIA \n SPEECH PRONUNCIATA: " + r);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     class TaskBackground extends AsyncTask<Integer, Integer, Integer> {
@@ -637,6 +696,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
 
+            refreshCSV();
             return 0;
 
         }

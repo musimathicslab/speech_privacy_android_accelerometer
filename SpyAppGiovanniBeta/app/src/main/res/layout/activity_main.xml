@@ -115,7 +115,7 @@
             android:layout_marginLeft="140dp"
             android:layout_marginTop="235dp"
             android:gravity="center"
-            android:onClick="go"
+            android:onClick="send"
             android:text="recognize"></Button>
 
         <Spinner
@@ -188,7 +188,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="416dp"
+        android:layout_width="match_parent"
         android:layout_height="101dp"
         android:background="@color/black"
         android:orientation="vertical"
@@ -202,7 +202,9 @@
             android:layout_height="match_parent"
             android:background="@drawable/borderred"
             android:textColor="@color/white"
-            android:textSize="30dp">
+            android:textSize="22dp"
+            android:paddingLeft="5dp"
+            >
 
         </TextView>
     </LinearLayout>
