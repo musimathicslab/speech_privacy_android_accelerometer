@@ -5,6 +5,7 @@ import numpy as np
 import scipy.interpolate
 from scipy import signal
 import tensorflow as tf
+import EvolutiveAlgoritm
 
 def highPassFilter(x, cutoff):
     fs = len(x)
@@ -115,6 +116,7 @@ def listDir(directory, file):
 
 app = flask.Flask(__name__)
 
+
 @app.route('/', methods=['GET', 'POST'])
 def handle_request():
 
@@ -136,6 +138,7 @@ def handle_request():
     risultato = f'{y_pred}'
 
     return risultato
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
