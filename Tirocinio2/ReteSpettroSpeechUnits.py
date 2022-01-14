@@ -229,11 +229,11 @@ def open_direct():
 if __name__ == '__main__':
 
     # CARICAMENTO DATASET
-    Dataset, Target = list_dir()
+    # Dataset, Target = list_dir()
     # Salvataggio DATASET & TARGET
     # save_direct(Dataset, Target)
     # Recupero DATASET & TARGET
-    # Dataset, Target = open_direct()
+    Dataset, Target = open_direct()
 
     # CREAZIONE DI TRAIN-SET E TEST-SET
     x_train, x_test, y_train, y_test = train_test_split(Dataset, Target, test_size=0.2, stratify=Target)
@@ -248,7 +248,7 @@ if __name__ == '__main__':
         input_shape = spectrogram.shape
 
     # array mutation
-    Dataset = np.asarray(Dataset)
+    # Dataset = np.asarray(Dataset)
 
     # CNN Building
     norm_layer = preprocessing.Normalization()
@@ -278,7 +278,7 @@ if __name__ == '__main__':
     )
 
     # Model Training
-    EPOCHS = 500
+    EPOCHS = 20
     history = model.fit(
         x=train_x,
         y=train_y,
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     print(f'Test set accuracy: {test_acc:.0%}')
 
     confusion_mtx = tf.math.confusion_matrix(y_true, y_pred)
-    plt.figure(figsize=(16, 14))
+    plt.figure(figsize=(30, 28))
     commands = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  21, 22, 23, 24, 25, 26, 27, 28,
                 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
                 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
@@ -300,5 +300,5 @@ if __name__ == '__main__':
                 annot=True, fmt='g')
     plt.xlabel('Prediction')
     plt.ylabel('Label')
-    model.save('ReteSpeechModels/Result_Test35')
+    model.save('ReteSpeechModels/Result_Test53')
     plt.show()
