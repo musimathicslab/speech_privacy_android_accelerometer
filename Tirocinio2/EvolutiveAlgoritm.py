@@ -499,7 +499,7 @@ def mutation_random(p_mut_random):
                         fitness = data_mut_random[elem + 1]
                         fitness[0]=fitness[0]+0.2
                         data_mut_random[elem + 1]= fitness
-                        x_starts=x_start
+                        x_starts.append(x_start)
                         x_ends.append(x_end2)
                     else:
                         x_starts.append(x_start)
@@ -576,6 +576,35 @@ def generate_graphic(a, msg):
     plt.legend(loc='upper right')
     plt.show()
 
+
+def generate_graphic2(a, msg, sentence_len):
+    """
+      Function that generate a graphic which represent the behaviour of accuracy
+       :param a: vector that represent the population result of the segmentation
+       :param msg: message to print
+       :param sentence_len: Duration of the sentence
+    """
+    x_axis = []
+    y_axis = []
+    y1_axis = []
+    P_graphic = a[0]
+    for elem in P_graphic:
+        x_axis.append((elem[1]+elem[0])/2)
+        y_axis.append(elem[3])
+        y1_axis.append(elem[4])
+
+    plt.axis([0, x_axis[len(x_axis) - 1], 0, 100])
+    plt.grid()
+    plt.xticks([2 * n for n in range(0, sentence_len)])
+    plt.yticks([10 * j for j in range(0, 10)])
+    fr='trend of accuracy and efficacy about a sentence of'+msg
+    plt.title(fr)
+    plt.xlabel('timestamp')
+    plt.ylabel('% of accuracy')
+    plt.plot(x_axis, y_axis, color='red', label='accuracy')
+    plt.plot(x_axis, y1_axis, color='blue', label='efficacy')
+    plt.legend(loc='upper right')
+    plt.show()
 
 
 def evolution_cycle(t_evo, x_evo, y_evo, z_evo, pop, epoch_evo, k_best):
@@ -666,7 +695,7 @@ if __name__ == '__main__':
     k=50
 
     # Elaboration FILE and building of the first population
-    P_first, t, x, y, z = population('SegmentationFile', 'frase121.csv', gene)
+    P_first, t, x, y, z = population('SegmentationFile', 'frase12.csv', gene)
     print(f'first population: {P_first}')
 
     # Elaboration of first population
@@ -701,3 +730,4 @@ if __name__ == '__main__':
         print(f'{element[2]}')
     print(f'-Accuracy: {accuracy}%')
     print(f'-Efficacy: {efficacy}%')
+    generate_graphic2(best_solution, ' 30 second ', 30)
