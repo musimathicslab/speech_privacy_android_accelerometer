@@ -1,5 +1,6 @@
 import csv
 import random
+
 import flask
 import EvolutiveAlgoritm
 from multiprocessing import Pool
@@ -144,6 +145,7 @@ def f(elem):
 
 
 app = flask.Flask(__name__)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def handle_request():
