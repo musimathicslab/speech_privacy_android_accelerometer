@@ -300,5 +300,5 @@ if __name__ == '__main__':
                 annot=True, fmt='g')
     plt.xlabel('Prediction')
     plt.ylabel('Label')
-    model.save('ReteSpeechModels/Result_Test53')
+    model.save('CNN_Models/Result_Test53')
     plt.show()
