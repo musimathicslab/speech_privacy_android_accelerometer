@@ -166,7 +166,7 @@ def chromosome(t_c, x_c, y_c, z_c, seg_start, seg_end):
 
     speech = list_dir(x1, y1, z1)
     if speech is not None:
-        loaded_model = tf.keras.models.load_model('ReteSpeechModels/Result_Test34')
+        loaded_model = tf.keras.models.load_model('CNN_Models/Result_Test34')
         prediction = loaded_model.predict(speech)
         y_prediction = np.argmax(prediction)
         prediction_percent = percent_prediction(prediction)
