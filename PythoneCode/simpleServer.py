@@ -152,7 +152,7 @@ def handle_request():
     # FILE elaboration
     Data = list_dir('ServerFile', fileCsv.filename)
     # Model load
-    loaded_model = tf.keras.models.load_model('ReteSpeechModels/Result_Test34')
+    loaded_model = tf.keras.models.load_model('CNN_Models/Result_Test34')
     y_pred = np.argmax(loaded_model.predict(Data), axis=1)
 
     # Sending result
