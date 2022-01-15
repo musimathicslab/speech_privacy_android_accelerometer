@@ -695,7 +695,7 @@ if __name__ == '__main__':
     k=50
 
     # Elaboration FILE and building of the first population
-    P_first, t, x, y, z = population('SegmentationFile', 'frase12.csv', gene)
+    P_first, t, x, y, z = population('Accelerometer_recorded_sentences', 'frase12.csv', gene)
     print(f'first population: {P_first}')
 
     # Elaboration of first population
