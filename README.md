@@ -1,6 +1,7 @@
 # AccelSpy, riconoscimento tramite accelerometro reso semplice
 
 ![Logo](https://i.ibb.co/PmxnCs5/logo.png) 
+
 AccelSpy è un applicazione mobile in grado di riconoscere, tramite l'accelerometro e un supporto lato server, il testo parlato dato un file csv.
 Tramite AccelSpy possiamo controllare l'accelerometro e possiamo decidere, mentre riproduciamo un audio, di usarlo per mappare l'audio riprodotto e di salvarlo in memoria.   
 Una volta salvato il file, sarà possibile inviarlo ad un server che lo elaborerà e ci restituirà nella console il testo riconosciuto.  
