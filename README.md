@@ -6,7 +6,11 @@ AccelSpy è un applicazione mobile in grado di riconoscere, tramite l'accelerome
 Tramite AccelSpy possiamo controllare l'accelerometro e possiamo decidere, mentre riproduciamo un audio, di usarlo per mappare l'audio riprodotto e di salvarlo in memoria.   
 Una volta salvato il file, sarà possibile inviarlo ad un server che lo elaborerà e ci restituirà nella console il testo riconosciuto.  
 Il tutto in un interfaccia intuitiva ed user-friendly.  
-Il cuore pulsante di AccelSpy è l'algoritmo evolutivo di segmentazione, che prende in input un file .csv e riconosce le varie speech unit presenti.  
+Il cuore pulsante di AccelSpy è l'algoritmo evolutivo di segmentazione, che prende in input un file .csv e riconosce le varie speech unit presenti.
+L'algoritmo evolutivo di segmentazione per riconoscere le varie speech unit presenti utilizza un modello di rete neurale CNN(convolutional neural network).
+La CNN è stata costruita su di un dataset composto da 86 speech unit aventi ciascuna 1800 sample in formato .csv raccolte da registrazioni dell'accelerometro.
+Le 86 speech unit sono state selezionate tra quelle più frequenti presenti nel range dei 50 proverbi presi in considerazione per lo studio.
+Per comporre il modello sono state testate diverse impostazioni ai fini di trovarne la migliore adatta alla nostra soluzione.
 Il codice del nostro lavoro è in chiaro e tranquillamente consultabile: sono presenti sia il codice dell'algoritmo evolutivo (in python) che il codice dell'applicazione (in Java).
 
 ## Screenshots
