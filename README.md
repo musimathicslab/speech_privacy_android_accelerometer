@@ -1,17 +1,17 @@
-# AccelSpy, riconoscimento tramite accelerometro reso semplice
+# AccelSpy, accelerometer recognition made simple.
 
 ![Logo](https://i.ibb.co/PmxnCs5/logo.png) 
 
-AccelSpy è un applicazione mobile in grado di riconoscere, tramite l'accelerometro e un supporto lato server, il testo parlato dato un file csv.
-Tramite AccelSpy possiamo controllare l'accelerometro e possiamo decidere, mentre riproduciamo un audio, di usarlo per mappare l'audio riprodotto e di salvarlo in memoria.   
-Una volta salvato il file, sarà possibile inviarlo ad un server che lo elaborerà e ci restituirà nella console il testo riconosciuto.  
-Il tutto in un interfaccia intuitiva ed user-friendly.  
-Il cuore pulsante di AccelSpy è l'algoritmo evolutivo di segmentazione, che prende in input un file .csv e riconosce le varie speech unit presenti.
-L'algoritmo evolutivo di segmentazione per riconoscere le varie speech unit presenti utilizza un modello di rete neurale CNN(convolutional neural network).
-La CNN è stata costruita su di un dataset composto da 86 speech unit aventi ciascuna 1800 sample in formato .csv raccolte da registrazioni dell'accelerometro.
-Le 86 speech unit sono state selezionate tra quelle più frequenti presenti nel range dei 50 proverbi presi in considerazione per lo studio.
-Per comporre il modello sono state testate diverse impostazioni ai fini di trovarne la migliore adatta alla nostra soluzione.
-Il codice del nostro lavoro è in chiaro e tranquillamente consultabile: sono presenti sia il codice dell'algoritmo evolutivo (in python) che il codice dell'applicazione (in Java).
+AccelSpy is a mobile application able to recognize, via the accelerometer and a server-side support, spoken text given a csv file.
+Through AccelSpy we can control the accelerometer and decide, while reproducing audios, to use it to map the reproduced audio and to save it in the device memory.   
+Once the file is saved, it will be possible to send it to a server that will process it and will return the recognized test displaying it in the console.  
+All in an intuitive and user-friendly interface.  
+The beating heart of AccelSpy is the evolutionary segmentation algorithm, that takes in input a csv file and recognises the various speech units in it.
+To recognise the speech units, the evolutionary segmentation algorithm uses a neural model called CNN (convolutional neural network).
+CNN was built with a dataset of 86 speech units having each 1800 samples, in csv format, collected from accelerometer recordings.
+The 86 speech units were selected among the most frequent in a 50 proverbs range taken in account in the thesis.
+To compose the model, various settings were tested in order to find the best one suited to our needs.
+The code is public and can be easily consulted: the evolutionary algorithm code (written in Python) and the application code both (written in Java).
 
 ## Screenshots
 
@@ -20,33 +20,28 @@ Il codice del nostro lavoro è in chiaro e tranquillamente consultabile: sono pr
 
 ## Features in app
 
-- Riprodurre audio (pre-registrati e non)
-- Registrare audio
-- Riconoscimento tramite invio al server
-- Possibilità di eliminare audio
-- Possibilità di selezionare il .csv da inviare
+- Reproduce audio
+- Audio recording
+- Csv recognising
+- Server-side support
+
+## User manual
+Here the [user manual](https://smallpdf.com/it/result#r=a599e56ab7c8aed98c94c3cf76e053cb&t=share-document) for the mobile application.
 
 
+## Optimizations
 
-## Manuale utente
-E' possibile consultare qui il [manuale utente](https://smallpdf.com/it/result#r=a599e56ab7c8aed98c94c3cf76e053cb&t=share-document) riguardante l'applicazione mobile.
-
-
-## Ottimizzazioni
-
-L'app è ottimizzata per il risparmio batteria ed è in grado di capire quando l'accelerometro non è in uso, così da poterlo spegnere.
+The app is optimized for battery saving and knows when the accelerometer is not in use, so the app can turn it off.
 
 
+## Installation
 
-## Installazione
-
-Per far partire l'app è necessiaria l'ultima versione di [Android Studio](https://developer.android.com/studio), reperibile qui.
-Per il test dell'algoritmo evolutivo di segmentazione, invece, bisogna installare [Python](https://www.python.org/downloads/).
-
+To start the app you need the latest version of [Android Studio](https://developer.android.com/studio).
+For the test of the evolutionary segmentation algorithm, however, it is necessary to install [Python](https://www.python.org/downloads/).
     
 ## Demo
 
-**Da inserire una gif o un video dimostrativo**
+**Insert a gif**
 
 
 ## Tech Stack
@@ -62,7 +57,7 @@ Per il test dell'algoritmo evolutivo di segmentazione, invece, bisogna installar
 [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 
 
-## Autori
+## Authors
 
 - [@Givaa](https://github.com/Givaa)
 - [@Michele-iodice](https://github.com/Michele-iodice)
