@@ -26,7 +26,7 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 - Server-side support
 
 ## User manual
-Here the [user manual](https://smallpdf.com/it/result#r=a599e56ab7c8aed98c94c3cf76e053cb&t=share-document) for the mobile application.
+[Here](https://smallpdf.com/it/result#r=a599e56ab7c8aed98c94c3cf76e053cb&t=share-document), the user manual for the mobile application.
 
 
 ## Optimizations
