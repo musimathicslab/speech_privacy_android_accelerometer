@@ -41,7 +41,7 @@ For the test of the evolutionary segmentation algorithm, however, it is necessar
     
 ## Demo
 
-![AccelSpy GIF](https://drive.google.com/file/d/1OB0WWTAvBVsEQN3MQLe9kV4EAV_tYC3l/view?usp=sharing)
+![AccelSpy GIF](https://lh4.googleusercontent.com/XZF33zTABLwwFAbXRzVUFr51APJ4octrGyYNIt-w15kddN3qXnQNJlj2xbqHgUUoYiCZgO7QvFx2SA=w958-h826)
 
 
 ## Tech Stack
