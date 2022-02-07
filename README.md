@@ -15,7 +15,7 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 
 ## Screenshots
 
-![App Screenshot](https://i.ibb.co/NWSXQHy/schermata-principale-dell-app.png)
+![App Screenshot](https://lh6.googleusercontent.com/9xeGZUiYg8_X6-NHs4c0SqhOcV6OnZx6C8ytmDZpbdk0gpNFE4q87kU3h-ezqwlcE6uiUaJ0MTmxOA=w1920-h929)
 
 
 ## Features in app
