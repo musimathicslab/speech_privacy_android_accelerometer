@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             createdTime = new Date();
-            fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova_Registrazione_#" + counterFileName + "_" + createdTime.toString().substring(0, 3) + "_" + createdTime.toString().substring(4, 7) + "_" + createdTime.toString().substring(8, 10) + "_" + createdTime.toString().substring(30, 34) + "_" + createdTime.toString().substring(11, 13) + "x" + createdTime.toString().substring(14, 16) + "x" + createdTime.toString().substring(17, 19) + ".3gp";
+            fileName = getExternalCacheDir().getAbsolutePath() + File.separator + "Nuova_Registrazione_#" + counterFileName + "_" + createdTime.toString().substring(0, 3) + "_" + createdTime.toString().substring(4, 7) + "_" + createdTime.toString().substring(8, 10) + "_" + createdTime.toString().substring(24, 28) + "_" + createdTime.toString().substring(11, 13) + "x" + createdTime.toString().substring(14, 16) + "x" + createdTime.toString().substring(17, 19) + ".3gp";
             recorder.setOutputFile(fileName);
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.setAudioEncodingBitRate(16 * 44100);
