@@ -638,7 +638,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        console.setText("Failed to Connect to Server ->"+ postUrl);
+                        //console.setText("phrase: {don't put too the is the if you want do it you can a to but you can't don't the you a by its put you can do }, Accuracy: 82%, Efficacy: 81%");
+                        console.setText("Failed to Connect to Server -> "+ postUrl);
                     }
                 });
             }
