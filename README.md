@@ -13,7 +13,7 @@ The 86 speech units were selected among the most frequent in a 50 proverbs range
 To compose the model, various settings were tested in order to find the best one suited to our needs.
 The code is public and can be easily consulted: the evolutionary algorithm code (written in Python) and the application code both (written in Java).
 
-## Screenshots
+## Threat Model
 
 ![App Screenshot](threat-model.png)
 
