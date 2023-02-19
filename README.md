@@ -15,7 +15,7 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 
 ## Screenshots
 
-![App Screenshot](https://drive.google.com/file/d/1lF0joD93mpWHz6A-QsnfgVz2vnk_DT2i/view?usp=share_link)
+![App Screenshot](threat-model.png)
 
 
 ## Features in app
