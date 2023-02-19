@@ -48,10 +48,6 @@ The app is optimized for battery saving and knows when the accelerometer is not 
 To start the app you need the latest version of [Android Studio](https://developer.android.com/studio).
 For the test of the evolutionary segmentation algorithm, however, it is necessary to install [Python](https://www.python.org/downloads/).
     
-## Demo
-
-![AccelSpy GIF](https://lh4.googleusercontent.com/XZF33zTABLwwFAbXRzVUFr51APJ4octrGyYNIt-w15kddN3qXnQNJlj2xbqHgUUoYiCZgO7QvFx2SA=w958-h826)
-
 
 ## Tech Stack
 
