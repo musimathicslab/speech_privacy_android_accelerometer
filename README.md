@@ -23,6 +23,10 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 
 ![App Screenshot](solution.png)
 
+## Percentage of recognized words as a function of the length of the sentences (from 5s to 60s) and for each length as a function of the length of the segments (from 0.50s to 0.80s)
+
+![App Screenshot](results.png)
+
 ## Features in app
 
 - Reproduce audio
