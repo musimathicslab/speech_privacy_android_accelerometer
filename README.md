@@ -1,8 +1,8 @@
-# AccelSpy, accelerometer recognition made simple.
+# AccelSpy 2.0, accelerometer recognition made simple.
 
 ![Logo](https://i.ibb.co/PmxnCs5/logo.png) 
 
-AccelSpy is a mobile application able to recognize, via the accelerometer and a server-side support, spoken text given a csv file.
+AccelSpy 2.0 is a mobile application able to recognize, via the accelerometer and a server-side support, spoken text given a csv file.
 Through AccelSpy we can control the accelerometer and decide, while reproducing audios, to use it to map the reproduced audio and to save it in the device memory.   
 Once the file is saved, it will be possible to send it to a server that will process it and will return the recognized test displaying it in the console.  
 All in an intuitive and user-friendly interface.  
@@ -15,7 +15,7 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 
 ## Screenshots
 
-![App Screenshot](https://lh6.googleusercontent.com/9xeGZUiYg8_X6-NHs4c0SqhOcV6OnZx6C8ytmDZpbdk0gpNFE4q87kU3h-ezqwlcE6uiUaJ0MTmxOA=w1920-h929)
+![App Screenshot](https://drive.google.com/file/d/1lF0joD93mpWHz6A-QsnfgVz2vnk_DT2i/view?usp=share_link)
 
 
 ## Features in app
