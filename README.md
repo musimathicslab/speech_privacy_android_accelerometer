@@ -17,6 +17,10 @@ The code is public and can be easily consulted: the evolutionary algorithm code 
 
 ![App Screenshot](threat-model.png)
 
+## The CNN
+
+![App Screenshot](acc-cnn.png)
+
 
 ## Features in app
 
